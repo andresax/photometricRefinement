@@ -38,7 +38,7 @@ void OpenMvgParser::parse() {
 
   std::map<int, glm::mat3> intrinsics;
   std::map<int, glm::vec3> distortion;
-  std::map<int, CameraType> extrinsics;
+  std::map<int, photometricGradient::CameraType> extrinsics;
 
   parseIntrinsics(intrinsics,distortion);
   parseExtrinsics(extrinsics);
@@ -52,7 +52,7 @@ void OpenMvgParser::parse() {
   }
 }
 
-void OpenMvgParser::parseViews(const std::map<int, glm::mat3> & intrinsics, const std::map<int, glm::vec3> &distortion, const std::map<int, CameraType> & extrinsics) {
+void OpenMvgParser::parseViews(const std::map<int, glm::mat3> & intrinsics, const std::map<int, glm::vec3> &distortion, const std::map<int, photometricGradient::CameraType> & extrinsics) {
 
   std::string basePath(document_["root_path"].GetString());
 
@@ -61,7 +61,7 @@ void OpenMvgParser::parseViews(const std::map<int, glm::mat3> & intrinsics, cons
       throw JsonAccessException("JsonAccessException--> error while querying HasMember(views)");
     const rapidjson::Value& camerasJson = document_["views"];
     sfm_data_.numCameras_ = camerasJson.Size();
-    sfm_data_.camerasList_.assign(sfm_data_.numCameras_, CameraType());
+    sfm_data_.camerasList_.assign(sfm_data_.numCameras_, photometricGradient::CameraType());
     sfm_data_.camerasPaths_.assign(sfm_data_.numCameras_, std::string());
     for (rapidjson::SizeType curCam = 0; curCam < camerasJson.Size(); curCam++) {
 
@@ -86,7 +86,7 @@ void OpenMvgParser::parseViews(const std::map<int, glm::mat3> & intrinsics, cons
         std::cerr << "std::out_of_range exception trying to look for intrinsics matrix " << idIntrinsics << std::endl;
       }
       try {
-        CameraType camCurrent = extrinsics.at(idExtrinsics);
+        photometricGradient::CameraType camCurrent = extrinsics.at(idExtrinsics);
         glm::mat4 eMatrix(0.0), kMatrix(0.0);
         for (int curR = 0; curR < 3; curR++) {
           for (int curC = 0; curC < 3; curC++) {
@@ -256,7 +256,7 @@ void OpenMvgParser::parseIntrinsics(std::map<int, glm::mat3> & intrinsics,std::m
   }
 }
 
-void OpenMvgParser::parseExtrinsics(std::map<int, CameraType> & extrinsics) {
+void OpenMvgParser::parseExtrinsics(std::map<int, photometricGradient::CameraType> & extrinsics) {
 
   try {
 
@@ -266,7 +266,7 @@ void OpenMvgParser::parseExtrinsics(std::map<int, CameraType> & extrinsics) {
 
     for (rapidjson::SizeType curInt = 0; curInt < extrinsicsJson.Size(); curInt++) {
       int key = extrinsicsJson[curInt]["key"].GetInt();
-      CameraType temp;
+      photometricGradient::CameraType temp;
 
       for (int curR = 0; curR < 3; curR++) {
         for (int curC = 0; curC < 3; curC++) {
@@ -279,7 +279,7 @@ void OpenMvgParser::parseExtrinsics(std::map<int, CameraType> & extrinsics) {
       }
       temp.translation = -temp.center * temp.rotation;
 
-      extrinsics.insert(std::pair<int, CameraType>(key, temp));
+      extrinsics.insert(std::pair<int, photometricGradient::CameraType>(key, temp));
     }
 
   } catch (JsonAccessException& e) {

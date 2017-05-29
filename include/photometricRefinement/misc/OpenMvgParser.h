@@ -1,10 +1,3 @@
-/*
- * OpenMvgParser.h
- *
- *  Created on: 16 mar 2016
- *      Author: andrea
- */
-
 #ifndef CAM_PARSERS_OPENMVGPARSER_H_
 #define CAM_PARSERS_OPENMVGPARSER_H_
 
@@ -13,6 +6,8 @@
 #include <fstream>
 #include <vector>
 #include <map>
+#include <string>
+#include <typesRefinement.hpp>
 #include <rapidjson/document.h>
 
 
