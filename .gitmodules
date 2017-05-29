@@ -1,0 +1,3 @@
+[submodule "photometricGradient"]
+	path = photometricGradient
+	url = https://github.com/andresax/photometricGradient.git
