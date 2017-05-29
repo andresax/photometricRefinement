@@ -22,6 +22,7 @@ PhotometricRefinementConfiguration Configurator::parseConfigFile() {
   utilities::readLineAndStore(file_, c.lambdaSmooth_);
   utilities::readLineAndStore(file_, c.maxDistanceCamFeatureRef);
   utilities::readLineAndStore(file_, c.numIt_);
+  utilities::readLineAndStore(file_, c.window_NCC_);
   utilities::readLineAndStore(file_, c.ensureedgemax_);
   utilities::readLineAndStore(file_, c.ensureedgeit_);
   utilities::readLineAndStore(file_, c.optionalNameDir_);

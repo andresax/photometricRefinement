@@ -52,6 +52,7 @@ SurfaceEvolver::~SurfaceEvolver() {
 void SurfaceEvolver::initEvolver() {
   init();
   photometricGradient_ = new photometricGradient::PhotometricGradient(imageWidth_, imageHeight_, window_);
+  photometricGradient_->setWindowNcc(config_.window_NCC_);
 }
 
 void SurfaceEvolver::beginEvolver() {
@@ -105,7 +106,7 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
     for (int curGradIter = 0; curGradIter < config_.numIt_; ++curGradIter) {
 
       log.startEvent();
-      std::cout << "++++Iteration num. " << (curLevelOfDetail) * config_.numIt_ + curGradIter << " num vert " << mesh_.p.size_of_vertices() << std::endl;
+      std::cout << "++++Iteration num. " << (4-curLevelOfDetail) * config_.numIt_ + curGradIter << " num vert " << mesh_.p.size_of_vertices() << std::endl;
       gradientVectorsField_.assign(mesh_.p.size_of_vertices(), glm::vec3(0, 0, 0));
       numGradientContribField_.assign(mesh_.p.size_of_vertices(), 0);
 
