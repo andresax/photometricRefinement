@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
  
-project(photometricRefinement)  
+project(photometricRefinementProject)  
  
 #----------------------- CMAKE MODULES ------------------------ 
 
@@ -44,6 +44,7 @@ endif()
 
 add_subdirectory(external/glfw)
 add_subdirectory(photometricGradient)
+#add_definitions(-DBASE_PATH_SHADERS="photometricGradient/")
  
 # ----------------------- INCLUDES ----------------------------
 include_directories(
