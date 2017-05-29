@@ -79,7 +79,8 @@ void SurfaceEvolver::resetMeshInfo() {
 
 void SurfaceEvolver::refine() {
   std::vector<int> frames;
-  for (int i = 0; i < sfmData_->camerasList_.size(); ++i){
+  for (int i = 0; i < 9; ++i){
+//    for (int i = 0; i < sfmData_->camerasList_.size(); ++i){
     frames.push_back(i);
   }
   refine(frames);
@@ -92,8 +93,10 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
 
   std::cout << "refine bef" << std::endl;
   std::vector<photometricGradient::CameraType> camsCur, camsCur2;
+  mesh_.smooth(config_.lambdaSmooth_, 0);
+  mesh_.smooth(config_.lambdaSmooth_, 0);
 
-  for (int curLevelOfDetail = 4; curLevelOfDetail > 0; --curLevelOfDetail) {
+  for (int curLevelOfDetail = 5; curLevelOfDetail > 0; --curLevelOfDetail) {
     
     ensureedgeCur_ = (0.5 * ensureedgeCur_ > config_.ensureedgemax_) ? 0.5 * ensureedgeCur_ : config_.ensureedgemax_;
     // resampleMesh(config_.ensureedgeit_);
@@ -106,7 +109,7 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
     for (int curGradIter = 0; curGradIter < config_.numIt_; ++curGradIter) {
 
       log.startEvent();
-      std::cout << "++++Iteration num. " << (4-curLevelOfDetail) * config_.numIt_ + curGradIter << " num vert " << mesh_.p.size_of_vertices() << std::endl;
+      std::cout << "++++Iteration num. " << (5-curLevelOfDetail) * config_.numIt_ + curGradIter << " num vert " << mesh_.p.size_of_vertices() << std::endl;
       gradientVectorsField_.assign(mesh_.p.size_of_vertices(), glm::vec3(0, 0, 0));
       numGradientContribField_.assign(mesh_.p.size_of_vertices(), 0);
 
@@ -116,18 +119,20 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
       for (auto p : curPairwiseCam_) {
 
         log.startEvent();
+//        log.startEvent();
         removeInvisible(sfmData_->camerasList_[p.first], sfmData_->camerasList_[p.second]);
-        log.endEventAndPrint("removeInvisible ", false);
+        //log.endEventAndPrint("removeInvisible ", false);
 
-        log.startEvent();
+        //log.startEvent();
         resetVertexArrayBuffer();
-        log.endEventAndPrint("  resetVertexArrayBuffer ", true);
+        //log.endEventAndPrint("  resetVertexArrayBuffer ", true);
         std::vector<glm::vec3> feedbackTr = photometricGradient_->twoImageGradient(images_[p.first], images_[p.second], sfmData_->camerasList_[p.first],
             sfmData_->camerasList_[p.second], numActiveVertices_, curLevelOfDetail);
 
         updateGradient(feedbackTr, config_.lambdaPhoto_);
 
         std::cout << " " << p.first << " & " << p.second << " ";
+        log.endEventAndPrint("  ", true);
         std::vector<glm::vec3>().swap(feedbackTr);
       }
       log.endEventAndPrint("all two images", true);
@@ -147,7 +152,7 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
 
       if (curGradIter % 1 == 0) {
         std::stringstream s;
-        s << config_.pathOutputDir_ << "CurMesh" <<(curLevelOfDetail) * config_.numIt_ + curGradIter << ".off";
+        s << config_.pathOutputDir_ << "CurMesh" <<(5-curLevelOfDetail) * config_.numIt_ + curGradIter << ".off";
         mesh_.saveFormat(s.str().c_str());
       }
     }
