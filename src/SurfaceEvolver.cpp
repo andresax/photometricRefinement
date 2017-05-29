@@ -357,7 +357,7 @@ void SurfaceEvolver::resampleMesh(int i) {
      CGAL::Subdivision_method_3::PTQ(mesh_.p, ClassicalSubdivision<Polyhedron>(tmp, config_.ensureedgemax_, config_.maxDistanceCamFeatureRef), 1);
      l.endEventAndPrint("Subdivision_method_3 ", true);*/
 
-    l.startEvent();
+   /* l.startEvent();
     MeshBuilder<HalfedgeDS, KernelExact> builder;
     for (auto f = mesh_.p.facets_begin(); f != mesh_.p.facets_end(); f++) {
       Halfedge_handle h1 = f->halfedge();
@@ -376,7 +376,7 @@ void SurfaceEvolver::resampleMesh(int i) {
     ptem.delegate(builder);
 
     mesh_.p = ptem;
-    l.endEventAndPrint("fixDegeneracy surfaceEvolver", true);
+    l.endEventAndPrint("fixDegeneracy surfaceEvolver", true);*/
 
     l.startEvent();
     mesh_.updateMeshData(false, false);
