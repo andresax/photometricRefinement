@@ -1,13 +1,13 @@
 #ifndef CAM_PARSERS_OPENMVGPARSER_H_
 #define CAM_PARSERS_OPENMVGPARSER_H_
 
-#include <types.hpp>
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <map>
 #include <string>
 #include <typesRefinement.hpp>
+#include <types.hpp>
 #include <rapidjson/document.h>
 
 
@@ -28,9 +28,9 @@ public:
   }
 
 private:
-  void parseViews(const std::map<int,glm::mat3> & intrinsics, const std::map<int, glm::vec3> &distortion, const std::map<int,CameraType> & extrinsics);
+  void parseViews(const std::map<int,glm::mat3> & intrinsics, const std::map<int, glm::vec3> &distortion, const std::map<int,photometricGradient::CameraType> & extrinsics);
   void parseIntrinsics(std::map<int,glm::mat3> & intrinsics, std::map<int, glm::vec3> &distortion);
-  void parseExtrinsics(std::map<int,CameraType> & extrinsics);
+  void parseExtrinsics(std::map<int,photometricGradient::CameraType> & extrinsics);
   void parsePoints();
 
 

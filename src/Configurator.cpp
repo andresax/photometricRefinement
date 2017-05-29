@@ -13,7 +13,7 @@ Configurator::Configurator(const std::string &path) {
 Configurator::~Configurator() {
 }
 
-ConfigurationSemanticReconstruction Configurator::parseConfigFile() {
+PhotometricRefinementConfiguration Configurator::parseConfigFile() {
   std::cout << "Configurator::parseConfigFile ... " << std::flush;
   utilities::readLineAndStore(file_, c.fileOpenMVG_);
   utilities::readLineAndStore(file_, c.pathInitMesh_);

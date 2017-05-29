@@ -31,7 +31,7 @@ struct PhotometricRefinementConfiguration {
   int numIt_;
   float ensureedgemax_;
   int ensureedgeit_;
-  std::string optionalNameDir;
+  std::string optionalNameDir_;
 };
  
 struct SfMData {

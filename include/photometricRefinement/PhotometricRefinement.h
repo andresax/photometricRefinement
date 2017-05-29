@@ -2,6 +2,7 @@
 #define PhotometricRefinement_H_
 
 #include <types.hpp>
+#include <typesRefinement.hpp>
 #include <glm.hpp>
 #include <SurfaceEvolver.h>
 #include <string>
@@ -17,7 +18,7 @@ private:
 
   std::vector<int> numFrame;
   SurfaceEvolver surfaceEvolver_;
-  ConfigurationSemanticReconstruction conf_;
+  PhotometricRefinementConfiguration conf_;
 
 };
 

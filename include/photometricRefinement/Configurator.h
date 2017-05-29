@@ -3,6 +3,7 @@
 
 #include <types.hpp>
 
+#include <typesRefinement.hpp>
 #include <string>
 #include <fstream>
 #include <iostream>
