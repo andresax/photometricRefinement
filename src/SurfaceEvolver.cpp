@@ -42,7 +42,8 @@ void SurfaceEvolver::initSurfaceEvolver(PhotometricRefinementConfiguration confi
   if (initEvol) {
     initEvolver();
   }
-  ensureedgeCur_ = 20 * config_.ensureedgemax_;
+  ensureedgeCur_ = 25 * config_.ensureedgemax_;
+  std::cout<<"-----------------ensureedgeCur_"<<ensureedgeCur_<<std::endl;
   pathCurMesh_ = std::string("tmpneeeeenovATTENZIONE.off");
 }
 
@@ -79,8 +80,8 @@ void SurfaceEvolver::resetMeshInfo() {
 
 void SurfaceEvolver::refine() {
   std::vector<int> frames;
-  for (int i = 0; i < 9; ++i){
-//    for (int i = 0; i < sfmData_->camerasList_.size(); ++i){
+//  for (int i = 0; i < 11; ++i){
+    for (int i = 0; i < sfmData_->camerasList_.size(); ++i){
     frames.push_back(i);
   }
   refine(frames);
@@ -96,10 +97,10 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
   mesh_.smooth(config_.lambdaSmooth_, 0);
   mesh_.smooth(config_.lambdaSmooth_, 0);
 
-  for (int curLevelOfDetail = 5; curLevelOfDetail > 0; --curLevelOfDetail) {
+  for (int curLevelOfDetail = 4; curLevelOfDetail > 0; --curLevelOfDetail) {
     
     ensureedgeCur_ = (0.5 * ensureedgeCur_ > config_.ensureedgemax_) ? 0.5 * ensureedgeCur_ : config_.ensureedgemax_;
-    // resampleMesh(config_.ensureedgeit_);
+     resampleMesh(config_.ensureedgeit_);
     // removeUnusedMesh(camsCur, false);
 
     for (Facet_iterator it = mesh_.p.facets_begin(); it != mesh_.p.facets_end(); it++) {
@@ -109,7 +110,7 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
     for (int curGradIter = 0; curGradIter < config_.numIt_; ++curGradIter) {
 
       log.startEvent();
-      std::cout << "++++Iteration num. " << (5-curLevelOfDetail) * config_.numIt_ + curGradIter << " num vert " << mesh_.p.size_of_vertices() << std::endl;
+      std::cout << "++++Iteration num. " << (4-curLevelOfDetail) * config_.numIt_ + curGradIter << " num vert " << mesh_.p.size_of_vertices() << std::endl;
       gradientVectorsField_.assign(mesh_.p.size_of_vertices(), glm::vec3(0, 0, 0));
       numGradientContribField_.assign(mesh_.p.size_of_vertices(), 0);
 
@@ -152,7 +153,7 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
 
       if (curGradIter % 1 == 0) {
         std::stringstream s;
-        s << config_.pathOutputDir_ << "CurMesh" <<(5-curLevelOfDetail) * config_.numIt_ + curGradIter << ".off";
+        s << config_.pathOutputDir_ << "CurMesh" <<(4-curLevelOfDetail) * config_.numIt_ + curGradIter << ".off";
         mesh_.saveFormat(s.str().c_str());
       }
     }
@@ -182,6 +183,26 @@ void SurfaceEvolver::computeCameraPairs(std::vector<int> frames, std::vector<std
   for (int it = 2; it < frames.size(); ++it) {
     int f1 = frames[it];
     int f2 = frames[it - 2];
+    pairwiseCam.push_back(std::pair<int, int>(f2, f1));
+    pairwiseCam.push_back(std::pair<int, int>(f1, f2));
+    std::stringstream sss;
+    sss << " " << f2 << " & " << f1 << " ";
+    logg_.printOn(sss.str());
+  }
+
+  for (int it = 3; it < frames.size(); ++it) {
+    int f1 = frames[it];
+    int f2 = frames[it - 3];
+    pairwiseCam.push_back(std::pair<int, int>(f2, f1));
+    pairwiseCam.push_back(std::pair<int, int>(f1, f2));
+    std::stringstream sss;
+    sss << " " << f2 << " & " << f1 << " ";
+    logg_.printOn(sss.str());
+  }
+
+  for (int it = 4; it < frames.size(); ++it) {
+    int f1 = frames[it];
+    int f2 = frames[it - 4];
     pairwiseCam.push_back(std::pair<int, int>(f2, f1));
     pairwiseCam.push_back(std::pair<int, int>(f1, f2));
     std::stringstream sss;
