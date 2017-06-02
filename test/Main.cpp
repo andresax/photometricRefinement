@@ -1,5 +1,5 @@
 #include <iostream>
-#include <PhotometricRefinement.h>
+//#include <PhotometricRefinement.h>
 #include <TestMeshSubdivision.h>
 
 int main(int argc, char **argv) {

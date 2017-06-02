@@ -18,13 +18,20 @@ void TestMeshSubdivision::testMeshSubdivision() {
   createCamera();
 
   MeshSubdivider ms;
-  ms.subdivide(mesh_.p, camera_.cameraMatrix);
+  for(int i=0;i<10;i++){
+  ms.subdivide(mesh_, camera_.cameraMatrix);
   showMeshOnCamera();
-
+  }
 }
 
 void TestMeshSubdivision::createMesh() {
-  mesh_.loadFormat("/home/andrea/workspaceC/plane.off", false);
+  //mesh_.loadFormat("/home/andrea/workspaceC/plane.off", false);
+
+  std::ifstream input("/home/andrea/workspaceC/plane.off");
+  Mesh mesh;
+  if (!input || !(input >> mesh_)) {
+    std::cerr << "Not a valid off file." << std::endl;
+  }
 }
 
 void TestMeshSubdivision::createCamera() {
@@ -72,11 +79,20 @@ void TestMeshSubdivision::createCamera() {
 }
 
 void TestMeshSubdivision::showMeshOnCamera() {
-  cv::Mat rendering = cv::Mat(camera_.imageWidth,camera_.imageHeight, CV_8UC3);
+  cv::Mat rendering = cv::Mat(camera_.imageWidth, camera_.imageHeight, CV_8UC3);
 
-  for (Halfedge_iterator heIt = mesh_.p.halfedges_begin(); heIt != mesh_.p.halfedges_end(); heIt++) {
-    glm::vec4 p1_3d = glm::vec4(heIt->vertex()->point().x(), heIt->vertex()->point().y(),heIt->vertex()->point().z(), 1.0);
-    glm::vec4 p2_3d = glm::vec4(heIt->opposite()->vertex()->point().x(), heIt->opposite()->vertex()->point().y(),heIt->opposite()->vertex()->point().z(), 1.0);
+  typedef MeshSurface::Halfedge_index he_descriptor;
+  typedef MeshSurface::Vertex_index vertex_descriptor;
+  //MeshSurface::Property_map<he_descriptor, Kernel::Point_3> location = mesh_.ha;
+  MeshSurface::Property_map<vertex_descriptor, Ker::Point_3> location = mesh_.points();
+  MeshSurface::Property_map<he_descriptor, Ker::Point_3> heValMap;
+
+  for (vertex_descriptor heIt : mesh_.vertices()) {
+//  for (Halfedge_iterator heIt = mesh_.p.halfedges_begin(); heIt != mesh_.p.halfedges_end(); heIt++) {
+//    glm::vec4 p1_3d = glm::vec4(heIt->vertex()->point().x(), heIt->vertex()->point().y(),heIt->vertex()->point().z(), 1.0);
+//        glm::vec4 p2_3d = glm::vec4(heIt->opposite()->vertex()->point().x(), heIt->opposite()->vertex()->point().y(),heIt->opposite()->vertex()->point().z(), 1.0);
+    glm::vec4 p1_3d = glm::vec4(location[heIt].x(), location[heIt].y(), location[heIt].z(), 1.0);
+    glm::vec4 p2_3d = glm::vec4(location[heIt].x(), location[heIt].y(), location[heIt].z(), 1.0);
 
     glm::vec4 pt1_2dH = p1_3d * camera_.cameraMatrix;
     glm::vec4 pt2_2dH = p2_3d * camera_.cameraMatrix;
@@ -87,8 +103,8 @@ void TestMeshSubdivision::showMeshOnCamera() {
     cv::Point2d p1 = cv::Point2d(pt1_2d.x, pt1_2d.y);
     cv::Point2d p2 = cv::Point2d(pt2_2d.x, pt2_2d.y);
 
-    cv::line(rendering, p1, p2, cv::Scalar(255,255,255,0),1);
-    std::cout<<p1<<std::endl;
+    cv::line(rendering, p1, p2, cv::Scalar(255, 255, 255, 0), 1);
+    //std::cout << p1 << std::endl;
 
   }
   cv::imshow("Rendering", rendering);
