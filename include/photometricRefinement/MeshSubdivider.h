@@ -19,13 +19,14 @@ public:
   virtual ~MeshSubdivider();
 
   void subdivide(MeshSurface &p, glm::mat4 cameraMatrix);
+  void subdivideold(MeshSurface &p, glm::mat4 cameraMatrix);
 
   void setAreaMax(int areaMax) {
     areaMax_ = areaMax;
   }
 
 private:
-
+  float orientPoint(const glm::vec2 &v0, const glm::vec2 &v1, const glm::vec2 &p);
   int areaMax_;
 };
 

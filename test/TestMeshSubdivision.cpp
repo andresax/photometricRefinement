@@ -18,10 +18,11 @@ void TestMeshSubdivision::testMeshSubdivision() {
   createCamera();
 
   MeshSubdivider ms;
-  for(int i=0;i<10;i++){
-  ms.subdivide(mesh_, camera_.cameraMatrix);
-  showMeshOnCamera();
+  for (int i = 0; i < 10; i++) {
+    showMeshOnCamera();
+    ms.subdivide(mesh_, camera_.cameraMatrix);
   }
+  showMeshOnCamera();
 }
 
 void TestMeshSubdivision::createMesh() {
@@ -81,18 +82,17 @@ void TestMeshSubdivision::createCamera() {
 void TestMeshSubdivision::showMeshOnCamera() {
   cv::Mat rendering = cv::Mat(camera_.imageWidth, camera_.imageHeight, CV_8UC3);
 
-  typedef MeshSurface::Halfedge_index he_descriptor;
   typedef MeshSurface::Vertex_index vertex_descriptor;
   //MeshSurface::Property_map<he_descriptor, Kernel::Point_3> location = mesh_.ha;
   MeshSurface::Property_map<vertex_descriptor, Ker::Point_3> location = mesh_.points();
-  MeshSurface::Property_map<he_descriptor, Ker::Point_3> heValMap;
+  for (MeshSurface::Edge_index heIt : mesh_.edges()) {
 
-  for (vertex_descriptor heIt : mesh_.vertices()) {
-//  for (Halfedge_iterator heIt = mesh_.p.halfedges_begin(); heIt != mesh_.p.halfedges_end(); heIt++) {
-//    glm::vec4 p1_3d = glm::vec4(heIt->vertex()->point().x(), heIt->vertex()->point().y(),heIt->vertex()->point().z(), 1.0);
-//        glm::vec4 p2_3d = glm::vec4(heIt->opposite()->vertex()->point().x(), heIt->opposite()->vertex()->point().y(),heIt->opposite()->vertex()->point().z(), 1.0);
-    glm::vec4 p1_3d = glm::vec4(location[heIt].x(), location[heIt].y(), location[heIt].z(), 1.0);
-    glm::vec4 p2_3d = glm::vec4(location[heIt].x(), location[heIt].y(), location[heIt].z(), 1.0);
+    vertex_descriptor td=CGAL::target(heIt,mesh_);
+    vertex_descriptor sd=CGAL::source(heIt,mesh_);
+
+
+    glm::vec4 p1_3d = glm::vec4(location[td].x(), location[td].y(), location[td].z(), 1.0);
+    glm::vec4 p2_3d = glm::vec4(location[sd].x(), location[sd].y(), location[sd].z(), 1.0);
 
     glm::vec4 pt1_2dH = p1_3d * camera_.cameraMatrix;
     glm::vec4 pt2_2dH = p2_3d * camera_.cameraMatrix;

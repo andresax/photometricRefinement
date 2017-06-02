@@ -1,14 +1,18 @@
 #include <MeshSubdivider.h>
 #include <CGAL/Iterator_range.h>
 
-
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <boost/function_output_iterator.hpp>
+#include <utilities.hpp>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 typedef boost::graph_traits<MeshSurface>::face_iterator fac_it;
+typedef MeshSurface::Halfedge_index halfedge_descriptor;
+typedef MeshSurface::Vertex_index vertex_descriptor;
+typedef MeshSurface::Face_index face_descriptor;
+typedef MeshSurface::Edge_index edge_descriptor;
 
 MeshSubdivider::MeshSubdivider() {
   areaMax_ = 16;
@@ -19,17 +23,113 @@ MeshSubdivider::~MeshSubdivider() {
 
 void MeshSubdivider::subdivide(MeshSurface &p, glm::mat4 cameraMatrix) {
 
-  double target_edge_length = 0.04;
-  unsigned int nb_iter = 3;
-  std::vector<MeshSurface::Face_index> fiv;
-  fiv.push_back(MeshSurface::Face_index(0));
-  fiv.push_back(MeshSurface::Face_index(2));
-  fiv.push_back(MeshSurface::Face_index(3));
+  bool found = false;
+  std::vector<halfedge_descriptor> eiv;
+  std::vector<face_descriptor> fiv;
 
+  MeshSurface::Property_map<vertex_descriptor, Ker::Point_3> location = p.points();
+
+  for (auto f : p.faces()) {
+    if (std::find(fiv.begin(), fiv.end(), f) == fiv.end()) {
+
+      halfedge_descriptor he1 = CGAL::halfedge(f, p);
+      edge_descriptor ed = CGAL::edge(he1, p);
+      halfedge_descriptor he2 = CGAL::next(CGAL::halfedge(f, p), p);
+      halfedge_descriptor he3 = CGAL::next(CGAL::next(CGAL::halfedge(f, p), p), p);
+      vertex_descriptor vd1 = CGAL::target(he1, p);
+      vertex_descriptor vd2 = CGAL::target(he2, p);
+      vertex_descriptor vd3 = CGAL::target(he3, p);
+
+      glm::vec2 pt2D_1 = utilities::projectPoint(cameraMatrix, glm::vec3(location[vd1].x(), location[vd1].y(), location[vd1].z()));
+      glm::vec2 pt2D_2 = utilities::projectPoint(cameraMatrix, glm::vec3(location[vd2].x(), location[vd2].y(), location[vd2].z()));
+      glm::vec2 pt2D_3 = utilities::projectPoint(cameraMatrix, glm::vec3(location[vd3].x(), location[vd3].y(), location[vd3].z()));
+
+      float area = 0.5 * glm::abs(orientPoint(pt2D_1, pt2D_2, pt2D_3));
+
+      if (area > areaMax_) {
+
+        eiv.push_back(he1);
+        eiv.push_back(he2);
+        eiv.push_back(he3);
+        fiv.push_back(f);
+        if (!CGAL::is_border(CGAL::opposite(he1, p), p) && std::find(fiv.begin(), fiv.end(), CGAL::face(CGAL::opposite(he1, p), p)) == fiv.end()) {
+          fiv.push_back(CGAL::face(CGAL::opposite(he1, p), p));
+        }
+        if (!CGAL::is_border(CGAL::opposite(he2, p), p) && std::find(fiv.begin(), fiv.end(), CGAL::face(CGAL::opposite(he2, p), p)) == fiv.end()) {
+          fiv.push_back(CGAL::face(CGAL::opposite(he2, p), p));
+        }
+        if (!CGAL::is_border(CGAL::opposite(he3, p), p) && std::find(fiv.begin(), fiv.end(), CGAL::face(CGAL::opposite(he3, p), p)) == fiv.end()) {
+          fiv.push_back(CGAL::face(CGAL::opposite(he3, p), p));
+        }
+
+      }
+    }
+  }
+
+  std::cout << "Split border..."<<std::endl;
+  for (auto he : eiv) {
+
+    halfedge_descriptor he2 = CGAL::opposite(he, p);
+    vertex_descriptor vd1 = CGAL::target(he, p);
+    vertex_descriptor vd2 = CGAL::source(he, p);
+    halfedge_descriptor heCur = CGAL::Euler::split_edge(he, p);
+    vertex_descriptor vdCur = CGAL::target(heCur, p);
+
+    MeshSurface::Property_map<vertex_descriptor, Ker::Point_3> location = p.points();
+    std::cout << "vd1 " << location[vd1] << std::endl;
+    std::cout << "vd2 " << location[vd2] << std::endl;
+    std::cout << "prima " << location[vdCur] << std::endl;
+    location[vdCur] = Ker::Point_3((location[vd1].x() + location[vd2].x()) / 2, (location[vd1].y() + location[vd2].y()) / 2,
+        (location[vd1].z() + location[vd2].z()) / 2);
+    std::cout << "dopo " << location[vdCur] << std::endl;
+  }
+
+
+  std::cout << "done." << std::endl;
+
+  std::cout << "Remeshing done." << std::endl;
+}
+
+void MeshSubdivider::subdivideold(MeshSurface &p, glm::mat4 cameraMatrix) {
+
+  double target_edge_length = 0.04;
+  std::vector<face_descriptor> fiv;
+
+  MeshSurface::Property_map<vertex_descriptor, Ker::Point_3> location = p.points();
+
+  for (auto f : p.faces()) {
+    halfedge_descriptor he1 = CGAL::halfedge(f, p);
+    halfedge_descriptor he2 = CGAL::next(CGAL::halfedge(f, p), p);
+    halfedge_descriptor he3 = CGAL::next(CGAL::next(CGAL::halfedge(f, p), p), p);
+    vertex_descriptor vd1 = CGAL::target(he1, p);
+    vertex_descriptor vd2 = CGAL::target(he2, p);
+    vertex_descriptor vd3 = CGAL::target(he3, p);
+
+    glm::vec2 pt2D_1 = utilities::projectPoint(cameraMatrix, glm::vec3(location[vd1].x(), location[vd1].y(), location[vd1].z()));
+    glm::vec2 pt2D_2 = utilities::projectPoint(cameraMatrix, glm::vec3(location[vd2].x(), location[vd2].y(), location[vd2].z()));
+    glm::vec2 pt2D_3 = utilities::projectPoint(cameraMatrix, glm::vec3(location[vd3].x(), location[vd3].y(), location[vd3].z()));
+
+    float area = 0.5 * glm::abs(orientPoint(pt2D_1, pt2D_2, pt2D_3));
+
+    if (area > areaMax_) {
+      fiv.push_back(f);
+    }
+  }
 
   std::cout << "Split border...";
   std::cout << "done." << std::endl;
-  //PMP::isotropic_remeshing(faces(p), target_edge_length, p, PMP::parameters::number_of_iterations(nb_iter));
-  PMP::isotropic_remeshing(CGAL::make_range(fiv.begin(), fiv.end()), target_edge_length, p, PMP::parameters::number_of_iterations(nb_iter));
+
+  PMP::isotropic_remeshing(CGAL::make_range(fiv.begin(), fiv.end()), target_edge_length, p, PMP::parameters::number_of_iterations(1));
+
   std::cout << "Remeshing done." << std::endl;
+}
+
+float MeshSubdivider::orientPoint(const glm::vec2& v0, const glm::vec2& v1, const glm::vec2& p) {
+  glm::mat2 m;
+  m[0][0] = (v1.x - v0.x);
+  m[0][1] = (p.x - v0.x);
+  m[1][0] = (v1.y - v0.y);
+  m[1][1] = (p.y - v0.y);
+
+  return m[0][0] * m[1][1] - m[0][1] * m[1][0];
 }
