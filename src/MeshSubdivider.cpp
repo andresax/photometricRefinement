@@ -25,7 +25,7 @@ void MeshSubdivider::subdivide(MeshSurface &p, glm::mat4 cameraMatrix) {
 
   bool found = false;
   int count = 0;
-  do {
+  //do {
     MeshSurface::Property_map<vertex_descriptor, Ker::Point_3> location = p.points();
     std::vector<halfedge_descriptor> eiv;
     std::vector<face_descriptor> fiv;
@@ -106,16 +106,17 @@ void MeshSubdivider::subdivide(MeshSurface &p, glm::mat4 cameraMatrix) {
       }
     }
 
-    if (count == 10)
+    if (count == 3)
       found = false;
+
     count++;
-  } while (found);
+ // } while (found);
 
   std::ofstream file("out.off");
   file << p;
   std::cout << "done." << std::endl;
   file.close();
-  exit(0);
+  //exit(0);
 
   std::cout << "Remeshing done." << std::endl;
 }

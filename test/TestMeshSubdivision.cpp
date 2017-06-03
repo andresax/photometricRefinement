@@ -80,34 +80,31 @@ void TestMeshSubdivision::createCamera() {
 }
 
 void TestMeshSubdivision::showMeshOnCamera() {
-  cv::Mat rendering = cv::Mat(camera_.imageWidth, camera_.imageHeight, CV_8UC3);
+  cv::Mat rendering = cv::Mat::zeros(camera_.imageWidth, camera_.imageHeight, CV_8UC3);
 
   typedef MeshSurface::Vertex_index vertex_descriptor;
   //MeshSurface::Property_map<he_descriptor, Kernel::Point_3> location = mesh_.ha;
   MeshSurface::Property_map<vertex_descriptor, Ker::Point_3> location = mesh_.points();
+
+
   for (MeshSurface::Edge_index heIt : mesh_.edges()) {
 
-    vertex_descriptor td=CGAL::target(heIt,mesh_);
-    vertex_descriptor sd=CGAL::source(heIt,mesh_);
+    vertex_descriptor td = CGAL::target(heIt, mesh_);
+    vertex_descriptor sd = CGAL::source(heIt, mesh_);
 
+    glm::vec2 pt1_2d = utilities::projectPoint(camera_.cameraMatrix, glm::vec3(location[td].x(), location[td].y(), location[td].z()));
+    glm::vec2 pt2_2d = utilities::projectPoint(camera_.cameraMatrix, glm::vec3(location[sd].x(), location[sd].y(), location[sd].z()));
 
-    glm::vec4 p1_3d = glm::vec4(location[td].x(), location[td].y(), location[td].z(), 1.0);
-    glm::vec4 p2_3d = glm::vec4(location[sd].x(), location[sd].y(), location[sd].z(), 1.0);
+    cv::Point2i p1 = cv::Point2i(static_cast<int>(pt1_2d.x), static_cast<int>(pt1_2d.y));
+    cv::Point2i p2 = cv::Point2i(static_cast<int>(pt2_2d.x), static_cast<int>(pt2_2d.y));
 
-    glm::vec4 pt1_2dH = p1_3d * camera_.cameraMatrix;
-    glm::vec4 pt2_2dH = p2_3d * camera_.cameraMatrix;
+    cv::line(rendering, p1, p2, cv::Scalar(255, 255, 255), 1);
 
-    glm::vec2 pt1_2d = glm::vec2(pt1_2dH.x / pt1_2dH.z, pt1_2dH.y / pt1_2dH.z);
-    glm::vec2 pt2_2d = glm::vec2(pt2_2dH.x / pt2_2dH.z, pt2_2dH.y / pt2_2dH.z);
-
-    cv::Point2d p1 = cv::Point2d(pt1_2d.x, pt1_2d.y);
-    cv::Point2d p2 = cv::Point2d(pt2_2d.x, pt2_2d.y);
-
-    cv::line(rendering, p1, p2, cv::Scalar(255, 255, 255, 0), 1);
-    //std::cout << p1 << std::endl;
-
+    cv::imshow("Rendering", rendering);
+    cv::waitKey();
   }
   cv::imshow("Rendering", rendering);
   cv::waitKey();
+  rendering.release();
 
 }
