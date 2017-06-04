@@ -18,8 +18,7 @@ void TestMeshSubdivision::testMeshSubdivision() {
   createCamera();
 
   MeshSubdivider ms;
-  for (int i = 0; i < 10; i++) {
-    showMeshOnCamera();
+  for (int i = 0; i < 20; i++) {
     ms.subdivide(mesh_, camera_.cameraMatrix);
   }
   showMeshOnCamera();
@@ -91,17 +90,12 @@ void TestMeshSubdivision::showMeshOnCamera() {
 
     vertex_descriptor td = CGAL::target(heIt, mesh_);
     vertex_descriptor sd = CGAL::source(heIt, mesh_);
-
     glm::vec2 pt1_2d = utilities::projectPoint(camera_.cameraMatrix, glm::vec3(location[td].x(), location[td].y(), location[td].z()));
     glm::vec2 pt2_2d = utilities::projectPoint(camera_.cameraMatrix, glm::vec3(location[sd].x(), location[sd].y(), location[sd].z()));
-
     cv::Point2i p1 = cv::Point2i(static_cast<int>(pt1_2d.x), static_cast<int>(pt1_2d.y));
     cv::Point2i p2 = cv::Point2i(static_cast<int>(pt2_2d.x), static_cast<int>(pt2_2d.y));
 
     cv::line(rendering, p1, p2, cv::Scalar(255, 255, 255), 1);
-
-    cv::imshow("Rendering", rendering);
-    cv::waitKey();
   }
   cv::imshow("Rendering", rendering);
   cv::waitKey();
