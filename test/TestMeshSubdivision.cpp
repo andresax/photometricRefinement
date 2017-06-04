@@ -18,9 +18,11 @@ void TestMeshSubdivision::testMeshSubdivision() {
   createCamera();
 
   MeshSubdivider ms;
-  for (int i = 0; i < 20; i++) {
-    ms.subdivide(mesh_, camera_.cameraMatrix);
-  }
+  ms.setNumIt(20);
+  ms.setAreaMax(100);
+
+  ms.subdivide(mesh_, camera_.cameraMatrix);
+
   showMeshOnCamera();
 }
 
@@ -84,7 +86,6 @@ void TestMeshSubdivision::showMeshOnCamera() {
   typedef MeshSurface::Vertex_index vertex_descriptor;
   //MeshSurface::Property_map<he_descriptor, Kernel::Point_3> location = mesh_.ha;
   MeshSurface::Property_map<vertex_descriptor, Ker::Point_3> location = mesh_.points();
-
 
   for (MeshSurface::Edge_index heIt : mesh_.edges()) {
 
