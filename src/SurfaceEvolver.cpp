@@ -42,9 +42,11 @@ void SurfaceEvolver::initSurfaceEvolver(PhotometricRefinementConfiguration confi
   if (initEvol) {
     initEvolver();
   }
-  ensureedgeCur_ = 25 * config_.ensureedgemax_;
-  std::cout << "-----------------ensureedgeCur_" << ensureedgeCur_ << std::endl;
+
   pathCurMesh_ = std::string("tmpneeeeenovATTENZIONE.off");
+
+  subdivider_.setNumIt(config.ensureareait_);
+  subdivider_.setAreaMax(config.ensureareamax_);
 }
 
 SurfaceEvolver::~SurfaceEvolver() {
@@ -89,16 +91,13 @@ void SurfaceEvolver::refine() {
 void SurfaceEvolver::refine(std::vector<int> frames) {
 
   computeCameraPairs(frames, curPairwiseCam_);
-
-  std::cout << "refine bef" << std::endl;
-  std::vector<photometricGradient::CameraType> camsCur, camsCur2;
   mesh_.smooth(config_.lambdaSmooth_, 0);
-  mesh_.smooth(config_.lambdaSmooth_, 0);
+  std::vector<glm::mat4> camerasOptimized;
+  whichCamsAmIUsing(curPairwiseCam_,camerasOptimized);
 
   for (int curLevelOfDetail = 4; curLevelOfDetail > 0; --curLevelOfDetail) {
-
-    ensureedgeCur_ = (0.5 * ensureedgeCur_ > config_.ensureedgemax_) ? 0.5 * ensureedgeCur_ : config_.ensureedgemax_;
-    resampleMesh(config_.ensureedgeit_);
+    subdivider_.setAreaMax(curLevelOfDetail*curLevelOfDetail*config_.ensureareamax_);
+    subdivider_.subdivide(mesh_,camerasOptimized);
     // removeUnusedMesh(camsCur, false);
 
     for (Facet_iterator it = mesh_.p.facets_begin(); it != mesh_.p.facets_end(); it++) {
@@ -206,6 +205,21 @@ void SurfaceEvolver::computeCameraPairs(std::vector<int> frames, std::vector<std
     sss << " " << f2 << " & " << f1 << " ";
     logg_.printOn(sss.str());
   }
+
+}
+
+
+
+void SurfaceEvolver::whichCamsAmIUsing(std::vector<std::pair<int, int> > &pairwiseCam, std::vector<glm::mat4>  & cams) {
+  std::vector<int> camerasOptimizedId;
+    for (auto p : curPairwiseCam_) {
+      camerasOptimizedId.push_back(p.first);
+      camerasOptimizedId.push_back(p.second);
+    }
+    std::vector<int>::iterator newEnd = std::unique(camerasOptimizedId.begin(),camerasOptimizedId.end());
+    for(auto it = camerasOptimizedId.begin(); it!= newEnd;it++){
+      cams.push_back(sfmData_->camerasList_[*it].cameraMatrix);
+    }
 
 }
 
@@ -348,17 +362,6 @@ void SurfaceEvolver::createVertexArrayBuffer() {
   resetVertexArrayBuffer();
 }
 
-void SurfaceEvolver::resampleMesh(int i) {
-  utilities::Logger l;
-  l.startEvent();
-
-
-  l.startEvent();
-  resetMeshInfo();
-  l.endEventAndPrint("resetMeshInfo", true);
-
-  l.endEventAndPrint("SurfaceEvolver::resampleMesh", true);
-}
 
 void SurfaceEvolver::initVisibility() {
   for (Vertex_iterator h = mesh_.p.vertices_begin(); h != mesh_.p.vertices_end(); ++h) {

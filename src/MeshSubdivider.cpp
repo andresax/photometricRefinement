@@ -1,6 +1,5 @@
 #include <MeshSubdivider.h>
 #include <CGAL/Iterator_range.h>
-#include <Logger.h>
 
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
@@ -22,13 +21,8 @@ MeshSubdivider::MeshSubdivider(int areaMax, int numIt) : Subdivider(areaMax,numI
 
 }
 
-MeshSubdivider::~MeshSubdivider() {
-}
-
 void MeshSubdivider::subdivide(MeshSurface &p, glm::mat4 cameraMatrix) {
-  utilities::Logger l;
 
-  l.startEvent();
   for (int curIt = 0; curIt < numIt_; ++curIt) {
 
     MeshSurface::Property_map<vertex_descriptor, Ker::Point_3> location = p.points();
@@ -83,10 +77,6 @@ void MeshSubdivider::subdivide(MeshSurface &p, glm::mat4 cameraMatrix) {
     std::cout << "Split border...it num." << curIt << std::endl;
     for (auto he : eiv) {
 
-      vertex_descriptor vTarget = CGAL::target(he, p);
-      vertex_descriptor vSource = CGAL::source(he, p);
-
-      halfedge_descriptor he2 = CGAL::opposite(he, p);
       vertex_descriptor vd1 = CGAL::target(he, p);
       vertex_descriptor vd2 = CGAL::source(he, p);
 
@@ -105,7 +95,6 @@ void MeshSubdivider::subdivide(MeshSurface &p, glm::mat4 cameraMatrix) {
     std::cout << "done." << std::endl;
 
   }
-  l.endEventAndPrint("",true);
 
   std::cout << "Remeshing done." << std::endl;
 }

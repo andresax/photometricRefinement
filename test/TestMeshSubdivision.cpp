@@ -4,7 +4,9 @@
 #include <opencv2/core.hpp>
 #include <glm.hpp>
 #include <utilities.hpp>
-#include <MeshSubdivider.h>
+//#include <MeshSubdivider.h>
+#include <Logger.h>
+#include <PolySubdivider.h>
 
 TestMeshSubdivision::TestMeshSubdivision() {
 
@@ -17,23 +19,25 @@ void TestMeshSubdivision::testMeshSubdivision() {
   createMesh();
   createCamera();
 
-  MeshSubdivider ms;
+  PolySubdivider ms;
+//  MeshSubdivider ms;
   ms.setNumIt(20);
   ms.setAreaMax(100);
-
+  utilities::Logger l;
+  l.startEvent();
   ms.subdivide(mesh_, camera_.cameraMatrix);
-
+  l.endEventAndPrint("testMeshSubdivision ended", true);
   showMeshOnCamera();
 }
 
 void TestMeshSubdivision::createMesh() {
-  //mesh_.loadFormat("/home/andrea/workspaceC/plane.off", false);
 
-  std::ifstream input("/home/andrea/workspaceC/plane.off");
-  Mesh mesh;
-  if (!input || !(input >> mesh_)) {
-    std::cerr << "Not a valid off file." << std::endl;
-  }
+  mesh_.loadFormat("/home/andrea/workspaceC/plane.off", false);
+
+//  std::ifstream input("/home/andrea/workspaceC/plane.off");
+//  if (!input || !(input >> mesh_)) {
+//    std::cerr << "Not a valid off file." << std::endl;
+//  }
 }
 
 void TestMeshSubdivision::createCamera() {
@@ -79,20 +83,40 @@ void TestMeshSubdivision::createCamera() {
   utilities::convertToMvp2(camera_, camera_.mvp);
 
 }
+/*
+ void TestMeshSubdivision::showMeshOnCamera() {
+ cv::Mat rendering = cv::Mat::zeros(camera_.imageWidth, camera_.imageHeight, CV_8UC3);
+
+ typedef MeshSurface::Vertex_index vertex_descriptor;
+ //MeshSurface::Property_map<he_descriptor, Kernel::Point_3> location = mesh_.ha;
+ MeshSurface::Property_map<vertex_descriptor, Ker::Point_3> location = mesh_.points();
+
+ for (MeshSurface::Edge_index heIt : mesh_.edges()) {
+
+ vertex_descriptor td = CGAL::target(heIt, mesh_);
+ vertex_descriptor sd = CGAL::source(heIt, mesh_);
+ glm::vec2 pt1_2d = utilities::projectPoint(camera_.cameraMatrix, glm::vec3(location[td].x(), location[td].y(), location[td].z()));
+ glm::vec2 pt2_2d = utilities::projectPoint(camera_.cameraMatrix, glm::vec3(location[sd].x(), location[sd].y(), location[sd].z()));
+ cv::Point2i p1 = cv::Point2i(static_cast<int>(pt1_2d.x), static_cast<int>(pt1_2d.y));
+ cv::Point2i p2 = cv::Point2i(static_cast<int>(pt2_2d.x), static_cast<int>(pt2_2d.y));
+
+ cv::line(rendering, p1, p2, cv::Scalar(255, 255, 255), 1);
+ }
+ cv::imshow("Rendering", rendering);
+ cv::waitKey();
+ rendering.release();
+
+ }*/
 
 void TestMeshSubdivision::showMeshOnCamera() {
   cv::Mat rendering = cv::Mat::zeros(camera_.imageWidth, camera_.imageHeight, CV_8UC3);
 
-  typedef MeshSurface::Vertex_index vertex_descriptor;
-  //MeshSurface::Property_map<he_descriptor, Kernel::Point_3> location = mesh_.ha;
-  MeshSurface::Property_map<vertex_descriptor, Ker::Point_3> location = mesh_.points();
+  for (Halfedge_iterator heIt = mesh_.p.halfedges_begin(); heIt != mesh_.p.halfedges_end(); heIt++) {
 
-  for (MeshSurface::Edge_index heIt : mesh_.edges()) {
-
-    vertex_descriptor td = CGAL::target(heIt, mesh_);
-    vertex_descriptor sd = CGAL::source(heIt, mesh_);
-    glm::vec2 pt1_2d = utilities::projectPoint(camera_.cameraMatrix, glm::vec3(location[td].x(), location[td].y(), location[td].z()));
-    glm::vec2 pt2_2d = utilities::projectPoint(camera_.cameraMatrix, glm::vec3(location[sd].x(), location[sd].y(), location[sd].z()));
+    glm::vec2 pt1_2d = utilities::projectPoint(camera_.cameraMatrix,
+        glm::vec3(heIt->vertex()->point().x(), heIt->vertex()->point().y(), heIt->vertex()->point().z()));
+    glm::vec2 pt2_2d = utilities::projectPoint(camera_.cameraMatrix,
+        glm::vec3(heIt->prev()->vertex()->point().x(), heIt->prev()->vertex()->point().y(), heIt->prev()->vertex()->point().z()));
     cv::Point2i p1 = cv::Point2i(static_cast<int>(pt1_2d.x), static_cast<int>(pt1_2d.y));
     cv::Point2i p2 = cv::Point2i(static_cast<int>(pt2_2d.x), static_cast<int>(pt2_2d.y));
 
@@ -103,3 +127,4 @@ void TestMeshSubdivision::showMeshOnCamera() {
   rendering.release();
 
 }
+

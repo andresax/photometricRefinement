@@ -30,8 +30,8 @@ struct PhotometricRefinementConfiguration {
   float maxDistanceCamFeatureRef;
   int numIt_;
   int window_NCC_;
-  float ensureedgemax_;
-  int ensureedgeit_;
+  int ensureareamax_;
+  int ensureareait_;
   std::string optionalNameDir_;
 };
  

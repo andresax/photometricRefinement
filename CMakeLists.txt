@@ -45,7 +45,7 @@ endif()
 add_subdirectory(external/glfw)
 add_subdirectory(photometricGradient)
 #add_definitions(-DBASE_PATH_SHADERS="photometricGradient/")
- 
+  
 # ----------------------- INCLUDES ----------------------------
 include_directories( 
                       ${OPENGL_INCLUDE_DIR} 

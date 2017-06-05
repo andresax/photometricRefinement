@@ -10,7 +10,7 @@ public:
   Subdivider();
   Subdivider(int areaMax, int numIt);
 
-  virtual ~Subdivider();
+  virtual ~Subdivider()=default;
   void setAreaMax(int areaMax) {
     areaMax_ = areaMax;
   }
@@ -18,7 +18,7 @@ public:
   void setNumIt(int numIt) {
     numIt_ = numIt;
   }
-private:
+protected:
   float orientPoint(const glm::vec2 &v0, const glm::vec2 &v1, const glm::vec2 &p);
   int areaMax_, numIt_;
 };

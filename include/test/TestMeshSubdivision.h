@@ -2,7 +2,8 @@
 #define TEST_TESTMESHSUBDIVISION_H_
 
 #include <typesRefinement.hpp>
-#include <MeshSubdivider.h>
+#include <Mesh.h>
+//#include <MeshSubdivider.h>
 
 class TestMeshSubdivision {
 public:
@@ -17,8 +18,8 @@ private:
   void showMeshOnCamera();
 
   photometricGradient::CameraType camera_;
-  MeshSurface mesh_;
-
+  Mesh mesh_;
+  //MeshSurface mesh_;
 
 };
 

@@ -12,7 +12,7 @@ class MeshSubdivider : public Subdivider {
 public:
   MeshSubdivider();
   MeshSubdivider(int areaMax, int numIt);
-  virtual ~MeshSubdivider();
+  virtual ~MeshSubdivider()=default;
 
   void subdivide(MeshSurface &p, glm::mat4 cameraMatrix);
 

@@ -8,6 +8,8 @@
 #include <PhotometricGradient.h>
 #include <OpenGLProgram.h>
 
+#include <PolySubdivider.h>
+
 #include <Mesh.h>
 #include <Logger.h>
 #include <typesRefinement.hpp>
@@ -32,7 +34,6 @@ public:
   void initSurfaceEvolver(PhotometricRefinementConfiguration config, std::shared_ptr<SfMData> sfmData, bool initEvolver = true);
 
   void restartWithNewMesh(const Mesh& mesh);
-  void resampleMesh(int numiter = 2);
 
   void initEvolver();
   void beginEvolver();
@@ -82,10 +83,9 @@ private:
   void loadImages();
   void resetMeshInfo();
   void computeCameraPairs(std::vector<int> frames,std::vector<std::pair<int, int> > &pairwiseCam);
-
+  void whichCamsAmIUsing(std::vector<std::pair<int, int> > &pairwiseCam, std::vector<glm::mat4>  & cams);
 
   void createVertexArrayBuffer();
-  void computeFacetToSubdivide(const std::vector<photometricGradient::CameraType> &cams, std::vector<Facet_iterator> &facets);
 
 
   PhotometricRefinementConfiguration config_;
@@ -108,8 +108,8 @@ private:
   Mesh mesh_;
 
   std::string pathCurMesh_;
-  float ensureedgeCur_;
   std::shared_ptr<SfMData> sfmData_;
+  PolySubdivider subdivider_;
 
 
 };

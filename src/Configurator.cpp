@@ -24,7 +24,7 @@ PhotometricRefinementConfiguration Configurator::parseConfigFile() {
   utilities::readLineAndStore(file_, c.numIt_);
   utilities::readLineAndStore(file_, c.window_NCC_);
   utilities::readLineAndStore(file_, c.ensureedgemax_);
-  utilities::readLineAndStore(file_, c.ensureedgeit_);
+  utilities::readLineAndStore(file_, c.ensureareait_);
   utilities::readLineAndStore(file_, c.optionalNameDir_);
 
   createDirRes();
@@ -39,7 +39,7 @@ void Configurator::createDirRes() {
   std::string base = "Results/";
   s << base << "Incremental_" << c.optionalNameDir_ << "_" << "_" << c.lambdaPhoto_ << "_"
       << c.lambdaSmooth_ << "_" << c.maxDistanceCamFeatureRef << "_" << c.numIt_ << "_"
-      << c.ensureedgemax_ << "_" << c.ensureedgeit_<<"/";
+      << c.ensureedgemax_ << "_" << c.ensureareait_<<"/";
 
   boost::filesystem::path dirbase(base.c_str());
   boost::filesystem::create_directories(dirbase);
