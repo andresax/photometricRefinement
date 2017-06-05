@@ -1,5 +1,6 @@
 #include <MeshSubdivider.h>
 #include <CGAL/Iterator_range.h>
+#include <Logger.h>
 
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
@@ -23,7 +24,9 @@ MeshSubdivider::~MeshSubdivider() {
 }
 
 void MeshSubdivider::subdivide(MeshSurface &p, glm::mat4 cameraMatrix) {
+  utilities::Logger l;
 
+  l.startEvent();
   for (int curIt = 0; curIt < numIt_; ++curIt) {
 
     MeshSurface::Property_map<vertex_descriptor, Ker::Point_3> location = p.points();
@@ -100,49 +103,11 @@ void MeshSubdivider::subdivide(MeshSurface &p, glm::mat4 cameraMatrix) {
     std::cout << "done." << std::endl;
 
   }
-
-//  std::ofstream file("out.off");
-//  file << p;
-//  std::cout << "done." << std::endl;
-//  file.close();
-//  //exit(0);
+  l.endEventAndPrint("",true);
 
   std::cout << "Remeshing done." << std::endl;
 }
-/*
- void MeshSubdivider::subdivideold(MeshSurface &p, glm::mat4 cameraMatrix) {
 
- double target_edge_length = 0.04;
- std::vector<face_descriptor> fiv;
-
- MeshSurface::Property_map<vertex_descriptor, Ker::Point_3> location = p.points();
-
- for (auto f : p.faces()) {
- halfedge_descriptor he1 = CGAL::halfedge(f, p);
- halfedge_descriptor he2 = CGAL::next(CGAL::halfedge(f, p), p);
- halfedge_descriptor he3 = CGAL::next(CGAL::next(CGAL::halfedge(f, p), p), p);
- vertex_descriptor vd1 = CGAL::target(he1, p);
- vertex_descriptor vd2 = CGAL::target(he2, p);
- vertex_descriptor vd3 = CGAL::target(he3, p);
-
- glm::vec2 pt2D_1 = utilities::projectPoint(cameraMatrix, glm::vec3(location[vd1].x(), location[vd1].y(), location[vd1].z()));
- glm::vec2 pt2D_2 = utilities::projectPoint(cameraMatrix, glm::vec3(location[vd2].x(), location[vd2].y(), location[vd2].z()));
- glm::vec2 pt2D_3 = utilities::projectPoint(cameraMatrix, glm::vec3(location[vd3].x(), location[vd3].y(), location[vd3].z()));
-
- float area = 0.5 * glm::abs(orientPoint(pt2D_1, pt2D_2, pt2D_3));
-
- if (area > areaMax_) {
- fiv.push_back(f);
- }
- }
-
- std::cout << "Split border...";
- std::cout << "done." << std::endl;
-
- PMP::isotropic_remeshing(CGAL::make_range(fiv.begin(), fiv.end()), target_edge_length, p, PMP::parameters::number_of_iterations(1));
-
- std::cout << "Remeshing done." << std::endl;
- }*/
 
 float MeshSubdivider::orientPoint(const glm::vec2& v0, const glm::vec2& v1, const glm::vec2& p) {
   glm::mat2 m;
