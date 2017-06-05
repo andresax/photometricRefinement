@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
  
-project(photometricRefinementProject)  
+project(photometricRefinementProject)   
  
 #----------------------- CMAKE MODULES ------------------------ 
 
@@ -60,6 +60,7 @@ include_directories(
                       include/photometricRefinement/
                       include/test/
                       include/photometricRefinement/misc/
+                      include/photometricRefinement/subdivider/
                       external/TransforMesh/include
                       ) 
 
@@ -70,6 +71,7 @@ include_directories(
 file(GLOB_RECURSE meshRec_SOURCE 
                   src/*.cpp
                   src/misc/*.cpp
+                  src/subdivider/*.cpp
                   test/*.cpp
                   )
 

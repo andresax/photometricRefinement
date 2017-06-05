@@ -8,7 +8,7 @@
 #include <PhotometricGradient.h>
 #include <OpenGLProgram.h>
 
-#include <PolySubdivider.h>
+#include <PolySubdividerOpenGl.h>
 
 #include <Mesh.h>
 #include <Logger.h>
@@ -109,7 +109,7 @@ private:
 
   std::string pathCurMesh_;
   std::shared_ptr<SfMData> sfmData_;
-  PolySubdivider subdivider_;
+  PolySubdividerOpenGl *subdivider_;
 
 
 };

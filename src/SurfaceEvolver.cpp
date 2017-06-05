@@ -44,9 +44,6 @@ void SurfaceEvolver::initSurfaceEvolver(PhotometricRefinementConfiguration confi
   }
 
   pathCurMesh_ = std::string("tmpneeeeenovATTENZIONE.off");
-
-  subdivider_.setNumIt(config.ensureareait_);
-  subdivider_.setAreaMax(config.ensureareamax_);
 }
 
 SurfaceEvolver::~SurfaceEvolver() {
@@ -55,6 +52,7 @@ SurfaceEvolver::~SurfaceEvolver() {
 void SurfaceEvolver::initEvolver() {
   init();
   photometricGradient_ = new photometricGradient::PhotometricGradient(imageWidth_, imageHeight_, window_);
+  subdivider_ = new PolySubdividerOpenGl(imageWidth_, imageHeight_, window_,config_.ensureareamax_,config_.ensureareait_);
   photometricGradient_->setWindowNcc(config_.window_NCC_);
 }
 
@@ -96,8 +94,14 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
   whichCamsAmIUsing(curPairwiseCam_,camerasOptimized);
 
   for (int curLevelOfDetail = 4; curLevelOfDetail > 0; --curLevelOfDetail) {
-    subdivider_.setAreaMax(curLevelOfDetail*curLevelOfDetail*config_.ensureareamax_);
-    subdivider_.subdivide(mesh_,camerasOptimized);
+    mesh_.saveFormat("Prima.off");
+    std::cout<<curLevelOfDetail*curLevelOfDetail*config_.ensureareamax_<<std::endl;
+    subdivider_->setCurActiveVertices(curActiveVertices_);
+    subdivider_->setAreaMax(curLevelOfDetail*curLevelOfDetail*config_.ensureareamax_);
+    subdivider_->subdivide(mesh_,camerasOptimized,numActiveVertices_);
+    mesh_.saveFormat("Dopo.off");
+    exit(0);
+
     // removeUnusedMesh(camsCur, false);
 
     for (Facet_iterator it = mesh_.p.facets_begin(); it != mesh_.p.facets_end(); it++) {
@@ -216,9 +220,12 @@ void SurfaceEvolver::whichCamsAmIUsing(std::vector<std::pair<int, int> > &pairwi
       camerasOptimizedId.push_back(p.first);
       camerasOptimizedId.push_back(p.second);
     }
+    std::sort(camerasOptimizedId.begin(), camerasOptimizedId.end());
+
     std::vector<int>::iterator newEnd = std::unique(camerasOptimizedId.begin(),camerasOptimizedId.end());
     for(auto it = camerasOptimizedId.begin(); it!= newEnd;it++){
-      cams.push_back(sfmData_->camerasList_[*it].cameraMatrix);
+      std::cout<<" "<<*it<<std::endl;
+      cams.push_back(sfmData_->camerasList_[*it].mvp);
     }
 
 }
@@ -319,6 +326,7 @@ void SurfaceEvolver::loadImages() {
 void SurfaceEvolver::resetVertexArrayBuffer() {
   glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObj_);
   photometricGradient_->setVertexBufferObj(vertexBufferObj_);
+  subdivider_->setVertexBufferObj(vertexBufferObj_);
 
   std::vector<glm::vec4> verticesUnwrapped;
 
