@@ -25,7 +25,7 @@ SurfaceEvolver::SurfaceEvolver(PhotometricRefinementConfiguration config, std::s
   initSurfaceEvolver(config, sfmdata, initEvol);
 }
 
-void SurfaceEvolver::initSurfaceEvolver(PhotometricRefinementConfiguration config, std::shared_ptr<SfMData> sfmdata, bool initEvol){
+void SurfaceEvolver::initSurfaceEvolver(PhotometricRefinementConfiguration config, std::shared_ptr<SfMData> sfmdata, bool initEvol) {
   config_ = config;
   sfmData_ = sfmdata;
   mesh_.loadFormat(config_.pathInitMesh_.c_str(), false);
@@ -43,7 +43,7 @@ void SurfaceEvolver::initSurfaceEvolver(PhotometricRefinementConfiguration confi
     initEvolver();
   }
   ensureedgeCur_ = 25 * config_.ensureedgemax_;
-  std::cout<<"-----------------ensureedgeCur_"<<ensureedgeCur_<<std::endl;
+  std::cout << "-----------------ensureedgeCur_" << ensureedgeCur_ << std::endl;
   pathCurMesh_ = std::string("tmpneeeeenovATTENZIONE.off");
 }
 
@@ -63,7 +63,6 @@ void SurfaceEvolver::beginEvolver() {
   photometricGradient_->setVboSimGrad(vboSimGrad_);
 }
 
-
 void SurfaceEvolver::restartWithNewMesh(const Mesh& mesh) {
   mesh_ = mesh;
   resetMeshInfo();
@@ -81,12 +80,11 @@ void SurfaceEvolver::resetMeshInfo() {
 void SurfaceEvolver::refine() {
   std::vector<int> frames;
 //  for (int i = 0; i < 11; ++i){
-    for (int i = 0; i < sfmData_->camerasList_.size(); ++i){
+  for (int i = 0; i < sfmData_->camerasList_.size(); ++i) {
     frames.push_back(i);
   }
   refine(frames);
 }
-
 
 void SurfaceEvolver::refine(std::vector<int> frames) {
 
@@ -98,9 +96,9 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
   mesh_.smooth(config_.lambdaSmooth_, 0);
 
   for (int curLevelOfDetail = 4; curLevelOfDetail > 0; --curLevelOfDetail) {
-    
+
     ensureedgeCur_ = (0.5 * ensureedgeCur_ > config_.ensureedgemax_) ? 0.5 * ensureedgeCur_ : config_.ensureedgemax_;
-     resampleMesh(config_.ensureedgeit_);
+    resampleMesh(config_.ensureedgeit_);
     // removeUnusedMesh(camsCur, false);
 
     for (Facet_iterator it = mesh_.p.facets_begin(); it != mesh_.p.facets_end(); it++) {
@@ -110,7 +108,7 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
     for (int curGradIter = 0; curGradIter < config_.numIt_; ++curGradIter) {
 
       log.startEvent();
-      std::cout << "++++Iteration num. " << (4-curLevelOfDetail) * config_.numIt_ + curGradIter << " num vert " << mesh_.p.size_of_vertices() << std::endl;
+      std::cout << "++++Iteration num. " << (4 - curLevelOfDetail) * config_.numIt_ + curGradIter << " num vert " << mesh_.p.size_of_vertices() << std::endl;
       gradientVectorsField_.assign(mesh_.p.size_of_vertices(), glm::vec3(0, 0, 0));
       numGradientContribField_.assign(mesh_.p.size_of_vertices(), 0);
 
@@ -153,12 +151,11 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
 
       if (curGradIter % 1 == 0) {
         std::stringstream s;
-        s << config_.pathOutputDir_ << "CurMesh" <<(4-curLevelOfDetail) * config_.numIt_ + curGradIter << ".off";
+        s << config_.pathOutputDir_ << "CurMesh" << (4 - curLevelOfDetail) * config_.numIt_ + curGradIter << ".off";
         mesh_.saveFormat(s.str().c_str());
       }
     }
   }
-
 
   std::stringstream s;
   s << config_.pathOutputDir_ << "/Mesh_Final.off";
@@ -219,7 +216,7 @@ void SurfaceEvolver::evolveMesh(const std::vector<glm::vec3>& displacements, con
 
   int curV = 0;
   for (Vertex_iterator v = mesh_.p.vertices_begin(); v != mesh_.p.vertices_end(); v++) {
-    if (count[curV] > 0 && !isnan(displacements[curV].x) && !isnan(displacements[curV].y) && !isnan(displacements[curV].z) ) {
+    if (count[curV] > 0 && !isnan(displacements[curV].x) && !isnan(displacements[curV].y) && !isnan(displacements[curV].z)) {
       //glm::vec3 normVal = sign * displacements[curV] / static_cast<float>(count[curV]);
       glm::vec3 normVal = sign * displacements[curV];
       values.push_back(glm::length(normVal));
@@ -298,8 +295,8 @@ void SurfaceEvolver::loadImages() {
 
     cv::Mat im = cv::imread(sfmData_->camerasList_[curC].pathImage);
     std::cout << "path " << sfmData_->camerasList_[curC].pathImage << std::endl;
-    
-      images_.push_back(im);
+
+    images_.push_back(im);
 //      cv::imshow("im",im);
 //      cv::waitKey();
   }
@@ -345,7 +342,7 @@ void SurfaceEvolver::resetVertexArrayBuffer() {
 }
 
 void SurfaceEvolver::createVertexArrayBuffer() {
-  glGenBuffers(1, &vertexBufferObj_); 
+  glGenBuffers(1, &vertexBufferObj_);
 
   photometricGradient_->setVertexBufferObj(vertexBufferObj_);
   resetVertexArrayBuffer();
@@ -355,61 +352,7 @@ void SurfaceEvolver::resampleMesh(int i) {
   utilities::Logger l;
   l.startEvent();
 
-  std::vector<photometricGradient::CameraType> tmp;
-  for (int i = curPairwiseCam_.front().second; i < curPairwiseCam_.back().second; i++) {
-    tmp.push_back(sfmData_->camerasList_[i]);
-  }
 
-  for (int curIterationSub = 0; curIterationSub < i; curIterationSub++) {
-    l.startEvent();
-    CGAL::Polygon_mesh_processing::split_long_edges(boost::edges(mesh_.p), ensureedgeCur_, mesh_.p);
-    l.endEventAndPrint("split_long_edges ", true);
-
-    //mesh_.saveFormat("ClassA.off");
-    // l.startEvent();
-    /*
-     std::vector<face_descriptor> facets;
-     computeFacetToSubdivide(tmp,facets);
-
-     //    face_iterator a1 = face_iterator(facets.begin());
-     //    face_iterator a2 = face_iterator(facets.end());
-     CGAL::Iterator_range<std::vector<Facet_iterator>::iterator> facetsBoost = CGAL::make_range(facets.begin(),facets.end());
-     //    CGAL::Iterator_range<face_iterator> facetsBoost = CGAL::make_range(a1, a2);
-
-     CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(mesh_.p),config_.ensureedgemax_,mesh_.p);
-     l.endEventAndPrint("isotropic_remeshing ", true);
-
-     mesh_.saveFormat("ClassB.off");
-     l.startEvent();
-     CGAL::Subdivision_method_3::PTQ(mesh_.p, ClassicalSubdivision<Polyhedron>(tmp, config_.ensureedgemax_, config_.maxDistanceCamFeatureRef), 1);
-     l.endEventAndPrint("Subdivision_method_3 ", true);*/
-
-   /* l.startEvent();
-    MeshBuilder<HalfedgeDS, KernelExact> builder;
-    for (auto f = mesh_.p.facets_begin(); f != mesh_.p.facets_end(); f++) {
-      Halfedge_handle h1 = f->halfedge();
-      Halfedge_handle h2 = f->halfedge()->next();
-      Halfedge_handle h3 = f->halfedge()->next()->next();
-      if (CGAL::squared_distance(h1->vertex()->point(), h1->opposite()->vertex()->point()) > 0.000000000000001
-          && CGAL::squared_distance(h2->vertex()->point(), h2->opposite()->vertex()->point()) > 0.000000000000001
-          && CGAL::squared_distance(h3->vertex()->point(), h3->opposite()->vertex()->point()) > 0.000000000000001) {
-
-        builder.addTriangle(f->triangleExact());
-      }
-    }
-
-    Polyhedron ptem;
-
-    ptem.delegate(builder);
-
-    mesh_.p = ptem;
-    l.endEventAndPrint("fixDegeneracy surfaceEvolver", true);*/
-
-    l.startEvent();
-    mesh_.updateMeshData(false, false);
-    l.endEventAndPrint("updateMeshData", true);
-    mesh_.smooth(config_.lambdaSmooth_, 0, true);
-  }
   l.startEvent();
   resetMeshInfo();
   l.endEventAndPrint("resetMeshInfo", true);
@@ -557,8 +500,8 @@ void SurfaceEvolver::removeInvisible(photometricGradient::CameraType cam1, photo
         &&//
         (-1.0f < pRes2.x / pRes2.w && pRes2.x / pRes2.w < 1.0f //
         && -1.0f < pRes2.y / pRes2.w && pRes2.y / pRes2.w < 1.0f //
-        && -1.0f < pRes2.z / pRes2.w && pRes2.z / pRes2.w < 1.0f) && pResA.z < config_.maxDistanceCamFeatureRef && pResB.z < config_.maxDistanceCamFeatureRef && dist1 < 2 * config_.maxDistanceCamFeatureRef
-        && dist2 < 2 * config_.maxDistanceCamFeatureRef)) {
+        && -1.0f < pRes2.z / pRes2.w && pRes2.z / pRes2.w < 1.0f) && pResA.z < config_.maxDistanceCamFeatureRef && pResB.z < config_.maxDistanceCamFeatureRef
+        && dist1 < 2 * config_.maxDistanceCamFeatureRef && dist2 < 2 * config_.maxDistanceCamFeatureRef)) {
 
 //        if ((dist1< 2*config_.maxDistanceCamFeatureRef && dist2< 2*config_.maxDistanceCamFeatureRef && pResA.z < config_.maxDistanceCamFeatureRef && pResB.z < config_.maxDistanceCamFeatureRef)) {
       h->setVisibility(true);
