@@ -57,6 +57,16 @@ void PolySubdividerOpenGl::subdivide(Mesh& p, std::vector<photometricGradient::C
   numActiveVertices_ = numActiveVertices;
   int count = 0;
 
+  for (auto v : curActiveVertices_) {
+    v->flag[3] = false;
+  }
+
+  for (Facet_handle f = p.p.facets_begin(); f != p.p.facets_end(); f++) {
+
+    f->has_intersections=false;
+
+  }
+
   std::cout << "PolySubdividerOpenGl::subdivide : " << numActiveVertices_ << " max area " << maxArea_ << std::endl;
   for (auto c : cameraMatrices) {
     depthMapProgram_->setArrayBufferObj(vertexBufferObj_, numActiveVertices_);
@@ -80,9 +90,6 @@ void PolySubdividerOpenGl::subdivide(Mesh& p, std::vector<photometricGradient::C
     SwapBuffers();
     // sleep(5.0);
 
-    for (auto v : curActiveVertices_) {
-      v->flag[3] = false;
-    }
     int curV = 0;
 
 //    std::ofstream f("ver.off");
@@ -91,7 +98,7 @@ void PolySubdividerOpenGl::subdivide(Mesh& p, std::vector<photometricGradient::C
     for (auto v : feedbackTr) {
 //      if (v > 0.5)
 //        vers.push_back(curActiveVertices_[curV]);
-     // std::cout<<v<<std::endl;
+      // std::cout<<v<<std::endl;
       curActiveVertices_[curV]->flag[3] = (curActiveVertices_[curV]->flag[3] || v > 0.5);
       curV++;
     }
@@ -106,14 +113,31 @@ void PolySubdividerOpenGl::subdivide(Mesh& p, std::vector<photometricGradient::C
   std::vector<Halfedge_handle> eiv;
   std::vector<Facet_handle> fiv;
   for (Halfedge_iterator heIt = p.p.halfedges_begin(); heIt != p.p.halfedges_end(); heIt++) {
+    bool toCheck = false;
+
     if (!heIt->is_border()) {
-      Vertex_handle v1 = heIt->vertex();
-      Vertex_handle v2 = heIt->opposite()->vertex();
-      if (v1->flag[3] && v2->flag[3]) {
-        eiv.push_back(heIt);
-        fiv.push_back(heIt->facet());
+
+      if (heIt->facet()->has_intersections == false) {
         if (!heIt->opposite()->is_border()) {
-          fiv.push_back(heIt->opposite()->facet());
+          if ( heIt->opposite()->facet()->has_intersections == false) {
+            toCheck = true;
+          }
+        } else {
+          toCheck = true;
+        }
+      }
+    }
+
+    if (toCheck) {
+      if (!heIt->is_border()) {
+        Vertex_handle v1 = heIt->vertex();
+        Vertex_handle v2 = heIt->opposite()->vertex();
+        if (v1->flag[3] && v2->flag[3]) {
+          eiv.push_back(heIt);
+          heIt->facet()->has_intersections = true;
+          if (!heIt->opposite()->is_border()) {
+            heIt->opposite()->facet()->has_intersections = true;
+          }
         }
       }
     }

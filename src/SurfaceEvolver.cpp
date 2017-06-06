@@ -512,17 +512,17 @@ void SurfaceEvolver::removeInvisible(photometricGradient::CameraType cam1, photo
 }
 
 void SurfaceEvolver::remesh(int lod) {
-//  mesh_.saveFormat("Prima.off");
+  mesh_.saveFormat("Prima.off");
   for (int var = 0; var < config_.ensureareait_; ++var) {
-    std::cout << lod * lod * config_.ensureareamax_ << std::endl;
+
     subdivider_->setCurActiveVertices(curActiveVertices_);
     subdivider_->setAreaMax(lod * lod * config_.ensureareamax_);
     subdivider_->subdivide(mesh_, camerasOptimized, numActiveVertices_);
     resetVertexArrayBuffer();
   }
   resetMeshInfo();
-//  mesh_.saveFormat("Dopo.off");
-//  exit(0);
+  mesh_.saveFormat("Dopo.off");
+  //exit(0);
 }
 
 void SurfaceEvolver::removeInvisible(photometricGradient::CameraType cam1) {

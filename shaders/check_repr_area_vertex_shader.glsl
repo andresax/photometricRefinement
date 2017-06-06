@@ -5,6 +5,7 @@ in vec3 position;
 out vec4 shadowCoordV;         
 out vec4 projectorTexCoordV; 
 out vec4 projectorCoordV;
+out vec3 position3D;
 
 uniform mat4 MVP;
 uniform mat4 camera;
@@ -12,7 +13,7 @@ uniform mat4 camera;
 void main(){
 
     gl_Position = MVP * vec4(position, 1.0);
-
+position3D = position;
     mat4 biasMatrix = mat4(
         0.5, 0.0, 0.0, 0.0,
         0.0, 0.5, 0.0, 0.0,

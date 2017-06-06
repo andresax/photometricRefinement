@@ -6,7 +6,8 @@ layout (triangle_strip, max_vertices=3) out;
 
 in vec4 shadowCoordV[];      
 in vec4 projectorTexCoordV[];
-in vec4 projectorCoordV[];        
+in vec4 projectorCoordV[];  
+in vec3 position3D[];      
 
 out vec4 shadowCoord;
 out float areaCheck;
@@ -27,9 +28,12 @@ void main(){
   vec2 pt0 = projectorCoordV[0].xy;
   vec2 pt1 = projectorCoordV[1].xy;
   vec2 pt2 = projectorCoordV[2].xy;
-  float d0 = length(pt0-pt1);
+  /*float d0 = length(pt0-pt1);
   float d1 = length(pt0-pt2);
-  float d2 = length(pt2-pt1);
+  float d2 = length(pt2-pt1);*/
+  float d0 = length(position3D[0]-position3D[1]);
+  float d1 = length(position3D[0]-position3D[2]);
+  float d2 = length(position3D[2]-position3D[1]);
   int which;
   int which2;
 
