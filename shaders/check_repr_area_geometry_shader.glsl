@@ -5,7 +5,8 @@ layout (triangle_strip, max_vertices=3) out;
  
 
 in vec4 shadowCoordV[];      
-in vec4 projectorTexCoordV[];        
+in vec4 projectorTexCoordV[];
+in vec4 projectorCoordV[];        
 
 out vec4 shadowCoord;
 out float areaCheck;
@@ -23,9 +24,9 @@ float orientPoint(vec2 v0, vec2 v1, vec2 p){
 
 
 void main(){
-  vec2 pt0 = projectorTexCoordV[0].xy;
-  vec2 pt1 = projectorTexCoordV[1].xy;
-  vec2 pt2 = projectorTexCoordV[2].xy;
+  vec2 pt0 = projectorCoordV[0].xy;
+  vec2 pt1 = projectorCoordV[1].xy;
+  vec2 pt2 = projectorCoordV[2].xy;
   float d0 = length(pt0-pt1);
   float d1 = length(pt0-pt2);
   float d2 = length(pt2-pt1);
@@ -44,16 +45,17 @@ void main(){
   }
 
   float area = abs(0.5*orientPoint(pt0, pt1, pt2));
-  
+  areaCheck = 0.0;
   for(int i = 0; i < gl_in.length(); i++){
     float shadowCoeff = textureProj(shadowMap, shadowCoordV[i]);
     gl_Position = gl_in[i].gl_Position;
     shadowCoord = shadowCoordV[i];
-
-    if (area > maxArea && (i == which)||(i == which2)){
-      areaCheck = shadowCoeff * 1.0;
+    if (!(any(lessThan(gl_Position.xyz, vec3(-gl_Position.w))) ||
+        any(greaterThan(gl_Position.xyz, vec3(gl_Position.w))))){
+      if (shadowCoeff>0.5 && area > maxArea && ((i == which)||(i == which2))){
+        areaCheck = 1.0;
+      }
     }
-
     EmitVertex();
   }
 }

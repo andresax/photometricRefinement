@@ -14,6 +14,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <Mesh.h>
+#include <types.hpp>
 class PolySubdividerOpenGl : public OpenGLProgram{
 public:
   PolySubdividerOpenGl(int imageWidth, int imageHeight, GLFWwindow* window);
@@ -30,8 +31,7 @@ public:
 
 
 
-  void subdivide(Mesh &p, glm::mat4 mvp, int numActiveVertices);
-  void subdivide(Mesh &p, std::vector<glm::mat4> mvps, int numActiveVertices);
+  void subdivide(Mesh &p, std::vector<photometricGradient::CameraType> mvps, int numActiveVertices);
 
   void setCurActiveVertices(const std::vector<Vertex_handle>& curActiveVertices) {
     curActiveVertices_ = curActiveVertices;

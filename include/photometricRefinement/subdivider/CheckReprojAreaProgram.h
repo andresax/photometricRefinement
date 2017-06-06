@@ -40,6 +40,10 @@ public:
     this->area_ = area;
   }
 
+  void setCameraMatrix(const glm::mat4& cameraMatrix) {
+    cameraMatrix_ = cameraMatrix;
+  }
+
 private:
   void init();
 
@@ -50,13 +54,14 @@ private:
   GLuint feedbackBuffer_;
   GLuint feedbackLength_;
   std::vector<float> feedbackTr;
-  GLuint depthTexture_;
+  GLuint depthTexture_,camCollID_;
   GLuint mvp1CollID_, shadowMapIdColl_,areaId_;
 
   GLint posAttribCollId_;
 
   float area_;
   glm::mat4 mvp;
+  glm::mat4 cameraMatrix_;
 };
 
 #endif /* SRC_SUBDIVIDER_CHECKREPROJAREAPROGRAM_H_ */

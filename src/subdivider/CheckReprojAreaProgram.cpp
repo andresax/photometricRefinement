@@ -21,6 +21,7 @@ void CheckReprojAreaProgram::compute(bool show) {
   shaderManager_.enable();
 
   glUniformMatrix4fv(mvp1CollID_, 1, GL_FALSE, &mvp[0][0]);
+  glUniformMatrix4fv(camCollID_, 1, GL_FALSE, &cameraMatrix_[0][0]);
     glUniform1f(areaId_, area_);
 
   glActiveTexture(GL_TEXTURE11);
@@ -94,6 +95,7 @@ void CheckReprojAreaProgram::createAttributes() {
 
 void CheckReprojAreaProgram::createUniforms() {
   mvp1CollID_ = shaderManager_.getUniformLocation("MVP");
+  camCollID_ = shaderManager_.getUniformLocation("camera");
   shadowMapIdColl_ = shaderManager_.getUniformLocation("shadowMap");
   areaId_ = shaderManager_.getUniformLocation("maxArea");
 }

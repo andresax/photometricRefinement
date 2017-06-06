@@ -83,11 +83,13 @@ private:
   void loadImages();
   void resetMeshInfo();
   void computeCameraPairs(std::vector<int> frames,std::vector<std::pair<int, int> > &pairwiseCam);
-  void whichCamsAmIUsing(std::vector<std::pair<int, int> > &pairwiseCam, std::vector<glm::mat4>  & cams);
+  void whichCamsAmIUsing(std::vector<std::pair<int, int> > &pairwiseCam, std::vector<photometricGradient::CameraType>  & cams);
 
   void createVertexArrayBuffer();
+  void remesh(int lod);
 
 
+  std::vector<photometricGradient::CameraType> camerasOptimized;
   PhotometricRefinementConfiguration config_;
   photometricGradient::PhotometricGradient *photometricGradient_;
 

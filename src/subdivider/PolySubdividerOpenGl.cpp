@@ -53,107 +53,56 @@ void PolySubdividerOpenGl::initShaders() {
   std::cout << "DONE" << std::endl;
 }
 
-void PolySubdividerOpenGl::subdivide(Mesh& p, glm::mat4 mvp, int numActiveVertices) {
+void PolySubdividerOpenGl::subdivide(Mesh& p, std::vector<photometricGradient::CameraType> cameraMatrices, int numActiveVertices) {
   numActiveVertices_ = numActiveVertices;
-  depthMapProgram_->setArrayBufferObj(vertexBufferObj_, numActiveVertices_);
-  static_cast<photometricGradient::DepthMapProgram *>(depthMapProgram_)->computeDepthMap(framebufferDepth_, mvp);
-  glFinish();
+  int count = 0;
 
-  //*******************GRAD COLL***********************************
-  reprojectionProgram_->setArrayBufferObj(vertexBufferObj_, numActiveVertices_);
-  static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->resetTransformFeedback(numActiveVertices_);
-  static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->setMvp(mvp);
-  static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->setFeedbackLength(numActiveVertices_);
-  static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->setDepthTexture(depthTexture_);
-  static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->compute(false);
-
-  glFinish();
-  //*/
-  SwapBuffers();
-  sleep(1.0);
-
-  for (auto v : curActiveVertices_) {
-    v->flag[3] = false;
-  }
-  int curV = 0;
-  std::vector<float> feedbackTr = static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->getFeedbackTr();
-  for (auto v : feedbackTr) {
-    curActiveVertices_[curV]->flag[3] = (curActiveVertices_[curV]->flag[3] || v > 0.5);
-    curV++;
-  }
-
-  std::vector<Halfedge_handle> eiv;
-  std::vector<Facet_handle> fiv;
-  for (Halfedge_iterator heIt = p.p.halfedges_begin(); heIt != p.p.halfedges_end(); heIt++) {
-    if (!heIt->is_border()) {
-      Vertex_handle v1 = heIt->vertex();
-      Vertex_handle v2 = heIt->opposite()->vertex();
-      if (v1->flag[3] && v2->flag[3]) {
-        eiv.push_back(heIt);
-        fiv.push_back(heIt->facet());
-        if (!heIt->opposite()->is_border()) {
-          fiv.push_back(heIt->opposite()->facet());
-        }
-      }
-    }
-  }
-
-  // std::cout << "Split border...it num." << curIt << std::endl;
-  for (auto he : eiv) {
-
-    Vertex_handle vd1 = he->vertex();
-    Vertex_handle vd2 = he->prev()->vertex();
-
-    Halfedge_handle heCur = p.p.split_edge(he);
-
-    heCur->vertex()->point() = Point((vd1->point().x() + vd2->point().x()) / 2, (vd1->point().y() + vd2->point().y()) / 2,
-        (vd1->point().z() + vd2->point().z()) / 2);
-
-    p.p.split_facet(heCur, he->next());
-
-    if (!he->opposite()->is_border()) {
-      p.p.split_facet(he->opposite(), heCur->opposite()->next());
-    }
-  }
-  //std::cout << "done." << std::endl;
-
-}
-
-void PolySubdividerOpenGl::subdivide(Mesh& p, std::vector<glm::mat4> cameraMatrices, int numActiveVertices) {
-  numActiveVertices_ = numActiveVertices;
+  std::cout << "PolySubdividerOpenGl::subdivide : " << numActiveVertices_ << " max area " << maxArea_ << std::endl;
   for (auto c : cameraMatrices) {
     depthMapProgram_->setArrayBufferObj(vertexBufferObj_, numActiveVertices_);
-    static_cast<photometricGradient::DepthMapProgram *>(depthMapProgram_)->computeDepthMap(framebufferDepth_, c);
+    static_cast<photometricGradient::DepthMapProgram *>(depthMapProgram_)->computeDepthMap(framebufferDepth_, c.mvp);
     glFinish();
 
-    std::cout<<"numActiveVertices_"<<numActiveVertices_<<std::endl;
-    std::cout<<"vertexBufferObj_"<<vertexBufferObj_<<std::endl;
+    std::cout << "Cam " << count << "  " << std::flush;
+    count++;
 
     //*******************GRAD COLL***********************************
     reprojectionProgram_->setArrayBufferObj(vertexBufferObj_, numActiveVertices_);
     static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->resetTransformFeedback(numActiveVertices_);
-    static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->setMvp(c);
+    static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->setMvp(c.mvp);
+    static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->setArea(maxArea_);
+    static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->setCameraMatrix(c.cameraMatrix);
     static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->setFeedbackLength(numActiveVertices_);
     static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->setDepthTexture(depthTexture_);
     static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->compute(false);
     glFinish();
     //*/
     SwapBuffers();
-    sleep(1.0);
+    // sleep(5.0);
 
     for (auto v : curActiveVertices_) {
       v->flag[3] = false;
     }
     int curV = 0;
+
+//    std::ofstream f("ver.off");
+//    std::vector<Vertex_handle> vers;
     std::vector<float> feedbackTr = static_cast<CheckReprojAreaProgram *>(reprojectionProgram_)->getFeedbackTr();
-    std::cout<<"feedbackTr.size "<<feedbackTr.size()<<std::endl;
-    std::cout<<"curActiveVertices_.size 2 "<<curActiveVertices_.size()<<std::endl;
     for (auto v : feedbackTr) {
+//      if (v > 0.5)
+//        vers.push_back(curActiveVertices_[curV]);
+     // std::cout<<v<<std::endl;
       curActiveVertices_[curV]->flag[3] = (curActiveVertices_[curV]->flag[3] || v > 0.5);
       curV++;
     }
-    std::cout<<"curActiveVertices_.size 2 "<<curActiveVertices_.size()<<std::endl;
+//    std::cout<<"vers "<<vers.size()<<std::endl;
+//    f << "OFF" << std::endl << vers.size() << " 0 0" << std::endl;
+//    for (auto v : vers) {
+//      f << v->point().x() << " " << v->point().y() << " " << v->point().z() << std::endl;
+//    }
+//    f.close();
   }
+
   std::vector<Halfedge_handle> eiv;
   std::vector<Facet_handle> fiv;
   for (Halfedge_iterator heIt = p.p.halfedges_begin(); heIt != p.p.halfedges_end(); heIt++) {
@@ -170,7 +119,7 @@ void PolySubdividerOpenGl::subdivide(Mesh& p, std::vector<glm::mat4> cameraMatri
     }
   }
 
-  // std::cout << "Split border...it num." << curIt << std::endl;
+  std::cout << "Split border...." << std::flush;
   for (auto he : eiv) {
 
     Vertex_handle vd1 = he->vertex();
@@ -188,4 +137,5 @@ void PolySubdividerOpenGl::subdivide(Mesh& p, std::vector<glm::mat4> cameraMatri
     }
   }
 
+  std::cout << "Subdivision Done" << std::endl;
 }

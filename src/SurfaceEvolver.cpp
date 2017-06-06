@@ -52,7 +52,7 @@ SurfaceEvolver::~SurfaceEvolver() {
 void SurfaceEvolver::initEvolver() {
   init();
   photometricGradient_ = new photometricGradient::PhotometricGradient(imageWidth_, imageHeight_, window_);
-  subdivider_ = new PolySubdividerOpenGl(imageWidth_, imageHeight_, window_,config_.ensureareamax_,config_.ensureareait_);
+  subdivider_ = new PolySubdividerOpenGl(imageWidth_, imageHeight_, window_, config_.ensureareamax_, config_.ensureareait_);
   photometricGradient_->setWindowNcc(config_.window_NCC_);
 }
 
@@ -69,7 +69,7 @@ void SurfaceEvolver::restartWithNewMesh(const Mesh& mesh) {
 }
 
 void SurfaceEvolver::resetMeshInfo() {
-  mesh_.updateMeshData();
+  mesh_.updateMeshData(false, false);
   std::size_t i = 0;
   for (Vertex_iterator it = mesh_.p.vertices_begin(); it != mesh_.p.vertices_end(); ++it) {
     it->id = i++;
@@ -90,17 +90,10 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
 
   computeCameraPairs(frames, curPairwiseCam_);
   mesh_.smooth(config_.lambdaSmooth_, 0);
-  std::vector<glm::mat4> camerasOptimized;
-  whichCamsAmIUsing(curPairwiseCam_,camerasOptimized);
+  whichCamsAmIUsing(curPairwiseCam_, camerasOptimized);
 
   for (int curLevelOfDetail = 4; curLevelOfDetail > 0; --curLevelOfDetail) {
-    mesh_.saveFormat("Prima.off");
-    std::cout<<curLevelOfDetail*curLevelOfDetail*config_.ensureareamax_<<std::endl;
-    subdivider_->setCurActiveVertices(curActiveVertices_);
-    subdivider_->setAreaMax(curLevelOfDetail*curLevelOfDetail*config_.ensureareamax_);
-    subdivider_->subdivide(mesh_,camerasOptimized,numActiveVertices_);
-    mesh_.saveFormat("Dopo.off");
-    exit(0);
+    remesh(curLevelOfDetail);
 
     // removeUnusedMesh(camsCur, false);
 
@@ -212,21 +205,19 @@ void SurfaceEvolver::computeCameraPairs(std::vector<int> frames, std::vector<std
 
 }
 
-
-
-void SurfaceEvolver::whichCamsAmIUsing(std::vector<std::pair<int, int> > &pairwiseCam, std::vector<glm::mat4>  & cams) {
+void SurfaceEvolver::whichCamsAmIUsing(std::vector<std::pair<int, int> > &pairwiseCam, std::vector<photometricGradient::CameraType> & cams) {
   std::vector<int> camerasOptimizedId;
-    for (auto p : curPairwiseCam_) {
-      camerasOptimizedId.push_back(p.first);
-      camerasOptimizedId.push_back(p.second);
-    }
-    std::sort(camerasOptimizedId.begin(), camerasOptimizedId.end());
+  for (auto p : curPairwiseCam_) {
+    camerasOptimizedId.push_back(p.first);
+    camerasOptimizedId.push_back(p.second);
+  }
+  std::sort(camerasOptimizedId.begin(), camerasOptimizedId.end());
 
-    std::vector<int>::iterator newEnd = std::unique(camerasOptimizedId.begin(),camerasOptimizedId.end());
-    for(auto it = camerasOptimizedId.begin(); it!= newEnd;it++){
-      std::cout<<" "<<*it<<std::endl;
-      cams.push_back(sfmData_->camerasList_[*it].mvp);
-    }
+  std::vector<int>::iterator newEnd = std::unique(camerasOptimizedId.begin(), camerasOptimizedId.end());
+  for (auto it = camerasOptimizedId.begin(); it != newEnd; it++) {
+    std::cout << " " << *it << std::endl;
+    cams.push_back(sfmData_->camerasList_[*it]);
+  }
 
 }
 
@@ -369,7 +360,6 @@ void SurfaceEvolver::createVertexArrayBuffer() {
   photometricGradient_->setVertexBufferObj(vertexBufferObj_);
   resetVertexArrayBuffer();
 }
-
 
 void SurfaceEvolver::initVisibility() {
   for (Vertex_iterator h = mesh_.p.vertices_begin(); h != mesh_.p.vertices_end(); ++h) {
@@ -519,6 +509,20 @@ void SurfaceEvolver::removeInvisible(photometricGradient::CameraType cam1, photo
     }
   }
 
+}
+
+void SurfaceEvolver::remesh(int lod) {
+//  mesh_.saveFormat("Prima.off");
+  for (int var = 0; var < config_.ensureareait_; ++var) {
+    std::cout << lod * lod * config_.ensureareamax_ << std::endl;
+    subdivider_->setCurActiveVertices(curActiveVertices_);
+    subdivider_->setAreaMax(lod * lod * config_.ensureareamax_);
+    subdivider_->subdivide(mesh_, camerasOptimized, numActiveVertices_);
+    resetVertexArrayBuffer();
+  }
+  resetMeshInfo();
+//  mesh_.saveFormat("Dopo.off");
+//  exit(0);
 }
 
 void SurfaceEvolver::removeInvisible(photometricGradient::CameraType cam1) {

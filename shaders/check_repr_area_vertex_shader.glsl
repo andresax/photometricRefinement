@@ -3,9 +3,11 @@
 in vec3 position;              
 
 out vec4 shadowCoordV;         
-out vec4 projectorTexCoordV;
+out vec4 projectorTexCoordV; 
+out vec4 projectorCoordV;
 
 uniform mat4 MVP;
+uniform mat4 camera;
 
 void main(){
 
@@ -28,5 +30,8 @@ void main(){
     projectorTexCoordV.y = projectorTexCoordV.y / projectorTexCoordV.w;
     projectorTexCoordV.z = projectorTexCoordV.z / projectorTexCoordV.w;
     projectorTexCoordV.w = projectorTexCoordV.w / projectorTexCoordV.w;
+    projectorCoordV = vec4(position, 1.0)*camera;
+    projectorCoordV.x = projectorCoordV.x / projectorCoordV.z;
+    projectorCoordV.y = projectorCoordV.y / projectorCoordV.z;
 }
 
