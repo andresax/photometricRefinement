@@ -117,15 +117,12 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
 //        log.startEvent();
         removeInvisible(sfmData_->camerasList_[p.first], sfmData_->camerasList_[p.second]);
         //log.endEventAndPrint("removeInvisible ", false);
-
         //log.startEvent();
         resetVertexArrayBuffer();
         //log.endEventAndPrint("  resetVertexArrayBuffer ", true);
         std::vector<glm::vec3> feedbackTr = photometricGradient_->twoImageGradient(images_[p.first], images_[p.second], sfmData_->camerasList_[p.first],
             sfmData_->camerasList_[p.second], numActiveVertices_, curLevelOfDetail);
-
         updateGradient(feedbackTr, config_.lambdaPhoto_);
-
         std::cout << " " << p.first << " & " << p.second << " ";
         log.endEventAndPrint("  ", true);
         std::vector<glm::vec3>().swap(feedbackTr);

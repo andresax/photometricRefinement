@@ -550,7 +550,7 @@ void convertToMvp2(photometricGradient::CameraType &cam, glm::mat4 &mvpOut) {
 
 void computeProjectionMatrix2(glm::mat3 &intrinsics, int h, int w, glm::mat4 &projectionMatrixOut) {
 
-  float N = 0.001;
+  float N = 0.01;
   float F = 100.0;
 
   glm::mat4 persp = glm::mat4(0.0);
