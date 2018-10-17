@@ -11,7 +11,7 @@
 //#include <output_transforMesh.hpp>
 
 #include <Logger.h>
-#include <CGAL/Subdivision_method_3.h>
+// #include <CGAL/Subdivision_method_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>

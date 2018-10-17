@@ -56,6 +56,7 @@ include_directories(
                       external/glm/glm/
                       external/glfw/include/
                       photometricGradient/include/photometricGradient/
+                      photometricGradient/include/
                       external/
                       include/photometricRefinement/
                       include/test/
