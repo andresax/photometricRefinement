@@ -4,6 +4,12 @@ The code in this repository implements a classical mesh refinement method that m
 It takes a json file in the format defined by openMVG [here](https://openmvg.readthedocs.io/en/latest/software/SfM/SfM_OutputFormat/).
 
 
+## Dependencies
+
+The codde is implemented in c++ and OpenGL. You can run the following in Ubuntu/Debian to install the required dependencies
+
+sudo apt install libboost-filesystem-dev libboost-thread-dev libboost-system-dev libopencv-dev libglew-dev libcgal-dev freeglut3-dev libmpfr-dev libglu1-mesa-dev
+
 ## Installation
 
 Clone the repository

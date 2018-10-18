@@ -13,7 +13,6 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(CGAL REQUIRED)
 find_package(GLEW REQUIRED) 
-find_package(OpenCV REQUIRED)
 find_package(MPRF REQUIRED)  
 find_package(OpenMP) 
 
