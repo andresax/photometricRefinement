@@ -11,6 +11,7 @@
 //#include <output_transforMesh.hpp>
 
 #include <Logger.h>
+#include <CameraChooser.h>
 // #include <CGAL/Subdivision_method_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
@@ -46,8 +47,6 @@ void SurfaceEvolver::initSurfaceEvolver(PhotometricRefinementConfiguration confi
   pathCurMesh_ = std::string("tmpneeeeenovATTENZIONE.off");
 }
 
-SurfaceEvolver::~SurfaceEvolver() {
-}
 
 void SurfaceEvolver::initEvolver() {
   init();
@@ -77,22 +76,58 @@ void SurfaceEvolver::resetMeshInfo() {
   resetVertexArrayBuffer();
 }
 
-void SurfaceEvolver::refine() {
+void SurfaceEvolver::refineWithNearCams() {
   std::vector<int> frames;
 //  for (int i = 0; i < 11; ++i){
   for (int i = 0; i < sfmData_->camerasList_.size(); ++i) {
     frames.push_back(i);
   }
-  refine(frames);
-}
-
-void SurfaceEvolver::refine(std::vector<int> frames) {
 
   computeCameraPairs(frames, curPairwiseCam_);
+  refine();
+}
+
+
+void SurfaceEvolver::refineWithBest2SfM() {
+  std::vector<std::vector<int>> camsToCompareIdEachCam_;
+  camsToCompareIdEachCam_.clear();
+  consideredIdx_.resize(sfmData_->camerasList_.size());
+  std::iota(consideredIdx_.begin(), consideredIdx_.begin() + sfmData_->camerasList_.size(), 0);
+  if (sfmData_->points_.size() > 0) {
+
+    CameraChooser camCh;
+    camCh.getBestBySfmOutput(sfmData_, 50, 1, camsToCompareIdEachCam_);
+
+    for (int camid = 0; camid < sfmData_->camerasList_.size(); camid++) {
+      std::cout << camid << ": " << std::flush;
+      for (auto c : camsToCompareIdEachCam_[camid])
+        std::cout << " " << c << std::flush;
+      std::cout << "; " << std::flush;
+
+      camsToCompareIdEachCam_[camid].push_back(camid);
+    }
+  }
+
+  for (int it = 0; it < consideredIdx_.size(); ++it) {
+    for (int it2 = 0; it2 < camsToCompareIdEachCam_[it].size(); ++it2) {
+      if (consideredIdx_[it] != camsToCompareIdEachCam_[it][it2]) {
+        curPairwiseCam_.push_back(std::pair<int, int>(consideredIdx_[it], camsToCompareIdEachCam_[it][it2]));
+        //          pairwiseCam.push_back(std::pair<int, int>(frames[it2], frames[it]));
+      }
+
+    }
+  }
+  refine();
+
+}
+
+void SurfaceEvolver::refine() {
+
   mesh_.smooth(config_.lambdaSmooth_, 0);
   whichCamsAmIUsing(curPairwiseCam_, camerasOptimized);
 
-  for (int curLevelOfDetail = 4; curLevelOfDetail > 0; --curLevelOfDetail) {
+  int maxLOD = 3;
+  for (int curLevelOfDetail = maxLOD; curLevelOfDetail > 0; --curLevelOfDetail) {
     remesh(curLevelOfDetail);
 
     // removeUnusedMesh(camsCur, false);
@@ -104,7 +139,7 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
     for (int curGradIter = 0; curGradIter < config_.numIt_; ++curGradIter) {
 
       log.startEvent();
-      std::cout << "++++Iteration num. " << (4 - curLevelOfDetail) * config_.numIt_ + curGradIter << " num vert " << mesh_.p.size_of_vertices() << std::endl;
+      std::cout << "++++Iteration num. " << (maxLOD - curLevelOfDetail) * config_.numIt_ + curGradIter << " num vert " << mesh_.p.size_of_vertices() << std::endl;
       gradientVectorsField_.assign(mesh_.p.size_of_vertices(), glm::vec3(0, 0, 0));
       numGradientContribField_.assign(mesh_.p.size_of_vertices(), 0);
 
@@ -113,7 +148,7 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
       std::cout << "comparison ";
       for (auto p : curPairwiseCam_) {
 
-        log.startEvent();
+        // log.startEvent();
 //        log.startEvent();
         removeInvisible(sfmData_->camerasList_[p.first], sfmData_->camerasList_[p.second]);
         //log.endEventAndPrint("removeInvisible ", false);
@@ -121,10 +156,10 @@ void SurfaceEvolver::refine(std::vector<int> frames) {
         resetVertexArrayBuffer();
         //log.endEventAndPrint("  resetVertexArrayBuffer ", true);
         std::vector<glm::vec3> feedbackTr = photometricGradient_->twoImageGradient(images_[p.first], images_[p.second], sfmData_->camerasList_[p.first],
-            sfmData_->camerasList_[p.second], numActiveVertices_, curLevelOfDetail);
+            sfmData_->camerasList_[p.second], numActiveVertices_, curLevelOfDetail-1);
         updateGradient(feedbackTr, config_.lambdaPhoto_);
-        std::cout << " " << p.first << " & " << p.second << " ";
-        log.endEventAndPrint("  ", true);
+        std::cout << " " << p.first << " & " << p.second << " "<<std::flush;
+        // log.endEventAndPrint("  ", true);
         std::vector<glm::vec3>().swap(feedbackTr);
       }
       log.endEventAndPrint("all two images", true);
@@ -164,7 +199,7 @@ void SurfaceEvolver::computeCameraPairs(std::vector<int> frames, std::vector<std
     int f1 = frames[it];
     int f2 = frames[it - 1];
     pairwiseCam.push_back(std::pair<int, int>(f2, f1));
-    pairwiseCam.push_back(std::pair<int, int>(f1, f2));
+    // pairwiseCam.push_back(std::pair<int, int>(f1, f2));
     std::stringstream sss;
     sss << " " << f2 << " & " << f1 << " ";
     logg_.printOn(sss.str());
@@ -180,25 +215,25 @@ void SurfaceEvolver::computeCameraPairs(std::vector<int> frames, std::vector<std
     logg_.printOn(sss.str());
   }
 
-  for (int it = 3; it < frames.size(); ++it) {
-    int f1 = frames[it];
-    int f2 = frames[it - 3];
-    pairwiseCam.push_back(std::pair<int, int>(f2, f1));
-    pairwiseCam.push_back(std::pair<int, int>(f1, f2));
-    std::stringstream sss;
-    sss << " " << f2 << " & " << f1 << " ";
-    logg_.printOn(sss.str());
-  }
+  // for (int it = 3; it < frames.size(); ++it) {
+  //   int f1 = frames[it];
+  //   int f2 = frames[it - 3];
+  //   pairwiseCam.push_back(std::pair<int, int>(f2, f1));
+  //   pairwiseCam.push_back(std::pair<int, int>(f1, f2));
+  //   std::stringstream sss;
+  //   sss << " " << f2 << " & " << f1 << " ";
+  //   logg_.printOn(sss.str());
+  // }
 
-  for (int it = 4; it < frames.size(); ++it) {
-    int f1 = frames[it];
-    int f2 = frames[it - 4];
-    pairwiseCam.push_back(std::pair<int, int>(f2, f1));
-    pairwiseCam.push_back(std::pair<int, int>(f1, f2));
-    std::stringstream sss;
-    sss << " " << f2 << " & " << f1 << " ";
-    logg_.printOn(sss.str());
-  }
+  // for (int it = 4; it < frames.size(); ++it) {
+  //   int f1 = frames[it];
+  //   int f2 = frames[it - 4];
+  //   pairwiseCam.push_back(std::pair<int, int>(f2, f1));
+  //   pairwiseCam.push_back(std::pair<int, int>(f1, f2));
+  //   std::stringstream sss;
+  //   sss << " " << f2 << " & " << f1 << " ";
+  //   logg_.printOn(sss.str());
+  // }
 
 }
 

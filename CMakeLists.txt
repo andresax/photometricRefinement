@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0)
  
 project(photometricRefinementProject)   
  
 #----------------------- CMAKE MODULES ------------------------ 
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)  
-    
+     
 # ----------------------- LIBRARIES ---------------------------
 find_package(Boost COMPONENTS filesystem system thread REQUIRED)
 find_package(OpenCV REQUIRED)
@@ -42,8 +42,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -frounding-math -fsanitize=address ")
 endif()
 
-add_subdirectory(external/glfw)
+# add_subdirectory(external/glfw)
 add_subdirectory(photometricGradient)
+add_subdirectory(bestViewsToBeCompared)
 #add_definitions(-DBASE_PATH_SHADERS="photometricGradient/")
   
 # ----------------------- INCLUDES ----------------------------
@@ -57,6 +58,7 @@ include_directories(
                       external/glfw/include/
                       photometricGradient/include/photometricGradient/
                       photometricGradient/include/
+                      bestViewsToBeCompared/include/
                       external/
                       include/photometricRefinement/
                       include/test/
@@ -84,10 +86,12 @@ target_link_libraries(photometricRefinement ${OpenCV_LIBS}
                                             ${LAPACK_LIBRARIES}
                                             ${OPENGL_LIBRARIES}
                                             ${GLEW_LIBRARIES}
-					                                  glfw ${GLFW_LIBRARIES}
+					                                  glfw 
+                                            ${GLFW_LIBRARIES}
                                             TransforMesh
-                                            photometricGradient
                                             -lmpfr
+                                            photometricGradient
+                                            bestViewsToBeCompared
                                             ${CGAL_LIBRARY}
                                             ${Boost_LIBRARIES})
 

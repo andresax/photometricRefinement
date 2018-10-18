@@ -17,6 +17,6 @@ PhotometricRefinement::~PhotometricRefinement() {
 
 void PhotometricRefinement::run() {
   surfaceEvolver_.beginEvolver();
-  surfaceEvolver_.refine();
+  surfaceEvolver_.refineWithBest2SfM();
 }
 

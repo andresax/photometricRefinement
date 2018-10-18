@@ -29,7 +29,7 @@ public:
   SurfaceEvolver();
   
   SurfaceEvolver(PhotometricRefinementConfiguration config, std::shared_ptr<SfMData> sfmData,bool initEvolver = true);
-  virtual ~SurfaceEvolver();
+  virtual ~SurfaceEvolver() = default;
 
   void initSurfaceEvolver(PhotometricRefinementConfiguration config, std::shared_ptr<SfMData> sfmData, bool initEvolver = true);
 
@@ -37,7 +37,8 @@ public:
 
   void initEvolver();
   void beginEvolver();
-  void refine(std::vector<int> frames);
+  void refineWithNearCams();
+  void refineWithBest2SfM();
   void refine();
 
   void saveVectorField(std::vector<glm::vec3> &feedbackTr, const std::vector<int> count);
@@ -112,6 +113,7 @@ private:
   std::string pathCurMesh_;
   std::shared_ptr<SfMData> sfmData_;
   PolySubdividerOpenGl *subdivider_;
+  std::vector<int> consideredIdx_;
 
 
 };

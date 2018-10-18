@@ -37,7 +37,7 @@ void Configurator::createDirRes() {
   std::cout << "Configurator::createDirRes  ..." << std::flush;
   std::stringstream s;
   std::string base = "Results/";
-  s << base << "Incremental_" << c.optionalNameDir_ << "_" << "_" << c.lambdaPhoto_ << "_"
+  s << base << "Result_" << c.optionalNameDir_ << "_" << "_" << c.lambdaPhoto_ << "_"
       << c.lambdaSmooth_ << "_" << c.maxDistanceCamFeatureRef << "_" << c.numIt_ << "_"
       << c.ensureareamax_ << "_" << c.ensureareait_<<"/";
 

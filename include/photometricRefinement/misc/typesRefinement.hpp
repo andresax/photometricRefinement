@@ -49,6 +49,22 @@ struct SfMData {
   std::vector<std::vector<glm::vec2> > point2DoncamViewingPoint_;
 
   int imageWidth_, imageHeight_;
+    std::string root_path="";
+
+  SfMData& operator=(const SfMData &other) {
+    numPoints_ = other.numPoints_;
+    numCameras_ = other.numCameras_;
+
+    points_= other.points_;
+    camerasList_= other.camerasList_;
+    camerasPaths_= other.camerasPaths_;
+
+    camViewingPointN_= other.camViewingPointN_;
+    pointsVisibleFromCamN_= other.pointsVisibleFromCamN_;
+    point2DoncamViewingPoint_= other.point2DoncamViewingPoint_;
+    return *this;
+  }
+
 };
 
 

@@ -45,7 +45,7 @@ void OpenMvgParser::parse() {
 
   parseViews(intrinsics,distortion, extrinsics);
 
-  //parsePoints();
+  parsePoints();
 
   for (rapidjson::SizeType curCam = 0; curCam < sfm_data_.camerasList_.size(); curCam++) {
     utilities::convertToMvp2(sfm_data_.camerasList_[curCam],sfm_data_.camerasList_[curCam].mvp);
