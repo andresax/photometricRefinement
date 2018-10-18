@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 3.0)
  
 project(photometricRefinementProject)   
+set( CMAKE_BUILD_TYPE "Release")
  
 #----------------------- CMAKE MODULES ------------------------ 
 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)  
-     
 # ----------------------- LIBRARIES ---------------------------
 find_package(Boost COMPONENTS filesystem system thread REQUIRED)
 find_package(OpenCV REQUIRED)
@@ -13,8 +12,8 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(CGAL REQUIRED)
 find_package(GLEW REQUIRED) 
-find_package(OpenCV REQUIRED)
-find_package(MPRF REQUIRED)  
+find_package(glm REQUIRED)
+find_package(MPFR REQUIRED)  
 find_package(OpenMP) 
 
 if (OPENMP_FOUND) 
@@ -24,28 +23,24 @@ endif()
  
 # ----------------------- GCC FLAGS ----------------------------
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-  link_directories(external/TransforMesh/build)
   MESSAGE( STATUS "CMAKE_BUILD_TYPE:    release->     " ${CMAKE_BUILD_TYPE} )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -frounding-math  ")
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "")
-  link_directories(external/TransforMesh/build)
   MESSAGE( STATUS "CMAKE_BUILD_TYPE:    release->     " ${CMAKE_BUILD_TYPE} )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -frounding-math  ")
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  link_directories(external/TransforMesh/build)
   MESSAGE( STATUS "CMAKE_BUILD_TYPE:  debug->      " ${CMAKE_BUILD_TYPE} )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -frounding-math  ")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -frounding-math -fsanitize=address ")
 endif()
 
-# add_subdirectory(external/glfw)
+add_subdirectory("external/TransforMesh")
 add_subdirectory(photometricGradient)
 add_subdirectory(bestViewsToBeCompared)
-#add_definitions(-DBASE_PATH_SHADERS="photometricGradient/")
   
 # ----------------------- INCLUDES ----------------------------
 include_directories( 
@@ -54,8 +49,7 @@ include_directories(
                       ${GMPXX_INCLUDE_DIR}
                       ${OpenCV_INCLUDE_DIRS} 
                       ${CGAL_INCLUDE_DIRS}
-                      external/glm/glm/
-                      external/glfw/include/
+		      ${GLM_INCLUDE_DIRS}/glm/
                       photometricGradient/include/photometricGradient/
                       photometricGradient/include/
                       bestViewsToBeCompared/include/
@@ -86,10 +80,11 @@ target_link_libraries(photometricRefinement ${OpenCV_LIBS}
                                             ${LAPACK_LIBRARIES}
                                             ${OPENGL_LIBRARIES}
                                             ${GLEW_LIBRARIES}
-					                                  glfw 
+					    ${GLM_LIBRARIES}
+					    glfw 
                                             ${GLFW_LIBRARIES}
                                             TransforMesh
-                                            -lmpfr
+                                            mpfr
                                             photometricGradient
                                             bestViewsToBeCompared
                                             ${CGAL_LIBRARY}
