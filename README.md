@@ -46,8 +46,15 @@ make
 
 Run the example.
 
-
 From the partent folder of the project:
+
+First uncompress the json (with the output of openMVG):
+
+```
+unzip sfm_data.zip sfm_data.json
+```
+
+Then, execute the program with the configuration file as parameter.
 
 ```
 ./build/photometricRefinement ./config/configDatasetCastle.conf
