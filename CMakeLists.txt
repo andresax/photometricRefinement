@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0)
  
 project(photometricRefinementProject)   
 set( CMAKE_BUILD_TYPE "Release")
+set( OpenGL_GL_PREFERENCE "GLVND" )
  
 #----------------------- CMAKE MODULES ------------------------ 
 
