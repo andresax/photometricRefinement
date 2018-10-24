@@ -4,7 +4,7 @@
 #include <ShaderManager.h>
 #include <ShaderProgram.h>
 #include <opencv2/core/core.hpp>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <types.hpp>
 #include <OpenGLProgram.h>
 #include <Mesh.h>

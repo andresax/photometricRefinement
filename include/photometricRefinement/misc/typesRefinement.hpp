@@ -1,7 +1,7 @@
 #ifndef TYPESPHOTOMETRICREFINEMENT_HPP_
 #define TYPESPHOTOMETRICREFINEMENT_HPP_
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 #include <vector>
 #include <types.hpp>

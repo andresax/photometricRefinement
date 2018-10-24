@@ -3,7 +3,7 @@
 
 #include <types.hpp>
 #include <typesRefinement.hpp>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <SurfaceEvolver.h>
 #include <string>
 

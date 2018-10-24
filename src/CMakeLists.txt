@@ -1,0 +1,2 @@
+add_library(configurator Configurator.cpp)
+add_library(photometricRefinement PhotometricRefinement.cpp)

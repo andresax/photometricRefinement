@@ -5,11 +5,11 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <string>
 #include <typesRefinement.hpp>
 #include <types.hpp>
-#include <Mesh.h>
+#include <TransforMesh/Mesh.h>
 
 namespace utilities {
 

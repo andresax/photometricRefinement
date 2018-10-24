@@ -10,13 +10,13 @@
 
 #include <PolySubdividerOpenGl.h>
 
-#include <Mesh.h>
+#include <TransforMesh/Mesh.h>
 #include <Logger.h>
 #include <typesRefinement.hpp>
 
 #include <opencv2/core/core.hpp>
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 

@@ -10,10 +10,10 @@
 
 #include <ShaderProgram.h>
 #include <OpenGLProgram.h>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <Mesh.h>
+#include <TransforMesh/Mesh.h>
 #include <types.hpp>
 class PolySubdividerOpenGl : public OpenGLProgram{
 public:

@@ -2,7 +2,7 @@
 #define BESTVIEWSTOBECOMPARED_SRC_COVERAGEPROGRAM_H_
 
 #include <ShaderProgram.h>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 
 class CoverageProgram : public ShaderProgram{

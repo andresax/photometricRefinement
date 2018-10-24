@@ -9,7 +9,7 @@
 #define PHOTOMETRIC_REFINEMENT_ANGLEPROGRAM_H_
 
 #include <ShaderProgram.h>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 class AngleProgram : public ShaderProgram{
 public:

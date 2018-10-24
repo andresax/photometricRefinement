@@ -10,7 +10,7 @@
 
 #include <ShaderProgram.h>
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 
 class CollectAngleProgram : public ShaderProgram{

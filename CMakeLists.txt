@@ -45,50 +45,18 @@ add_subdirectory(bestViewsToBeCompared)
   
 # ----------------------- INCLUDES ----------------------------
 include_directories( 
-                      ${OPENGL_INCLUDE_DIR} 
-                      ${GLEW_INCLUDE_DIRS}
-                      ${GMPXX_INCLUDE_DIR}
-                      ${OpenCV_INCLUDE_DIRS} 
-                      ${CGAL_INCLUDE_DIRS}
-		      ${GLM_INCLUDE_DIRS}/glm/
                       photometricGradient/include/photometricGradient/
-                      photometricGradient/include/
                       bestViewsToBeCompared/include/
-                      external/
                       include/photometricRefinement/
                       include/test/
                       include/photometricRefinement/misc/
                       include/photometricRefinement/subdivider/
-                      external/TransforMesh/include
+                      external/
                       ) 
 
-# ------------------------ MESSAGES ----------------------------
  
 # ------------------------ BUILD -------------------------------
-
-file(GLOB_RECURSE meshRec_SOURCE 
-                  src/*.cpp
-                  src/misc/*.cpp
-                  src/subdivider/*.cpp
-                  test/*.cpp
-                  )
-
-add_executable(photometricRefinement ${meshRec_SOURCE})
-target_link_libraries(photometricRefinement ${OpenCV_LIBS} 
-                                            ${MPRF_LIBRARIES}
-                                            ${GMPXX_LIBRARIES}
-                                            ${GMP_LIBRARIES}
-                                            ${LAPACK_LIBRARIES}
-                                            ${OPENGL_LIBRARIES}
-                                            ${GLEW_LIBRARIES}
-					    ${GLM_LIBRARIES}
-					    glfw 
-                                            ${GLFW_LIBRARIES}
-                                            TransforMesh
-                                            mpfr
-                                            photometricGradient
-                                            bestViewsToBeCompared
-                                            ${CGAL_LIBRARY}
-                                            ${Boost_LIBRARIES})
-
-
+add_subdirectory(src)
+add_subdirectory("src/misc")
+add_subdirectory("src/subdivider")
+add_subdirectory(test)
