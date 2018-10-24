@@ -3,7 +3,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
-#include <Subdivider.h>
+#include <subdivider/Subdivider.h>
 
 typedef CGAL::Simple_cartesian<double>                   Ker;
 typedef CGAL::Surface_mesh<Ker::Point_3> MeshSurface;

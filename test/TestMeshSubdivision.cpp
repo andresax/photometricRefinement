@@ -1,12 +1,12 @@
-#include <TestMeshSubdivision.h>
+#include <test/TestMeshSubdivision.h>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/core.hpp>
-#include <glm.hpp>
-#include <utilities.hpp>
-//#include <MeshSubdivider.h>
-#include <Logger.h>
-#include <PolySubdivider.h>
+#include <glm/glm.hpp>
+#include <photometricGradient/Logger.h>
+#include <misc/utilities.hpp>
+//#include <subdivider/MeshSubdivider.h>
+#include <subdivider/PolySubdivider.h>
 
 TestMeshSubdivision::TestMeshSubdivision() {
 

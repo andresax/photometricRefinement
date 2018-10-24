@@ -1,8 +1,8 @@
 #ifndef TEST_TESTMESHSUBDIVISION_H_
 #define TEST_TESTMESHSUBDIVISION_H_
 
-#include <typesRefinement.hpp>
-#include <Mesh.h>
+#include <misc/typesRefinement.hpp>
+#include <TransforMesh/Mesh.h>
 //#include <MeshSubdivider.h>
 
 class TestMeshSubdivision {

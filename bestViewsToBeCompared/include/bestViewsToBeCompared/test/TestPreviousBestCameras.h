@@ -3,7 +3,7 @@
 #define TEST_PREVBESTCAM_H_
 
 #include <memory>
-#include <typesRefinement.hpp>
+#include <photometricRefinement/misc/typesRefinement.hpp>
 
 class TestPreviousBestCameras {
 public:

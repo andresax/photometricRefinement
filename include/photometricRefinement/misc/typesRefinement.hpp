@@ -4,7 +4,6 @@
 #include <glm/glm.hpp>
 
 #include <vector>
-#include <types.hpp>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -18,7 +17,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 
-
+#include <photometricGradient/types.hpp>
 
 
 struct PhotometricRefinementConfiguration {

@@ -1,14 +1,18 @@
 #ifndef BestView_CAMERACHOOSER_H_
 #define BestView_CAMERACHOOSER_H_
 
-#include <ShaderManager.h>
-#include <ShaderProgram.h>
 #include <opencv2/core/core.hpp>
 #include <glm/glm.hpp>
-#include <types.hpp>
-#include <OpenGLProgram.h>
-#include <Mesh.h>
-#include <typesRefinement.hpp>
+#include <TransforMesh/Mesh.h>
+#include <photometricGradient/ShaderManager.h>
+#include <photometricGradient/ShaderProgram.h>
+#include <photometricGradient/types.hpp>
+#include <photometricGradient/OpenGLProgram.h>
+#include <photometricGradient/DepthMapProgram.h>
+#include <photometricRefinement/misc/typesRefinement.hpp>
+#include "CoverageProgram.h"
+#include "AngleProgram.h"
+#include "CollectAngleProgram.h"
 
 class CameraChooser : public OpenGLProgram {
 public:

@@ -2,7 +2,7 @@
 #define INCLUDE_SUBDIVIDER_H_
 
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 
 class Subdivider {

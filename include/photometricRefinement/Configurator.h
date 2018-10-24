@@ -1,12 +1,14 @@
 #ifndef CONFIGURATOR_H_
 #define CONFIGURATOR_H_
 
-#include <types.hpp>
 
-#include <typesRefinement.hpp>
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <boost/filesystem.hpp>
+#include <photometricGradient/types.hpp>
+#include <misc/typesRefinement.hpp>
+#include <misc/utilities.hpp>
 
 class Configurator {
   public:

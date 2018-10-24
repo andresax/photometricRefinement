@@ -6,8 +6,8 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <typesRefinement.hpp>
-#include <types.hpp>
+#include <misc/typesRefinement.hpp>
+#include <photometricGradient/types.hpp>
 #include <rapidjson/document.h>
 
 

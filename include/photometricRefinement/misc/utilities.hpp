@@ -5,10 +5,10 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include <glm/glm.hpp>
 #include <string>
-#include <typesRefinement.hpp>
-#include <types.hpp>
+#include <glm/glm.hpp>
+#include <misc/typesRefinement.hpp>
+#include <photometricGradient/types.hpp>
 #include <TransforMesh/Mesh.h>
 
 namespace utilities {

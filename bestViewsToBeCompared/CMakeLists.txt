@@ -2,20 +2,11 @@ cmake_minimum_required(VERSION 2.8.3)
 set( CMAKE_BUILD_TYPE "Debug")
 set( CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE ) # avoid annoying messages
 set( OpenGL_GL_PREFERENCE "GLVND" )
+set( bestViewsToBeCompared_BUILD_DIR "${PROJECT_SOURCE_DIR}/build/src/}" PARENT_SCOPE)
+set( bestViewsToBeCompared_LIBRARIES "angleProgram cameraChooser collectAngleProgram coverageProgram" PARENT_SCOPE)
 project(bestViewsToBeCompared)
 
 # ----------------------- LIBRARIES ---------------------------
-#find_package(Boost COMPONENTS filesystem system thread REQUIRED)
-#find_package(PkgConfig REQUIRED)
-#find_package(glfw3 REQUIRED)
-#find_package(OpenGL REQUIRED)
-#find_package(OpenCV REQUIRED)
-#find_package(GLUT REQUIRED)
-#find_package(glm REQUIRED)
-#find_package(CGAL REQUIRED)
-#find_package(GLEW REQUIRED)
-#find_package(MPFR REQUIRED) 
-#find_package(OpenMP) 
 
 if (OPENMP_FOUND) 
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
@@ -32,10 +23,10 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 # ----------------------- INCLUDES ----------------------------
-include_directories(	include/bestViewsToBeCompared/ 
-			include/photometricGradient/
-			include/TransforMesh/
-			include/photometricRefinement/misc/
+include_directories(	
+			${PROJECT_SOURCE_DIR}/include/bestViewsToBeCompared/
+			${PROJECT_SOURCE_DIR}/include/
 			) 
 
 add_subdirectory(src)
+#add_subdirectory(test)

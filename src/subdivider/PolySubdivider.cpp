@@ -1,5 +1,5 @@
-#include <PolySubdivider.h>
-#include <utilities.hpp>
+#include <subdivider/PolySubdivider.h>
+#include <misc/utilities.hpp>
 
 PolySubdivider::PolySubdivider() {
 }

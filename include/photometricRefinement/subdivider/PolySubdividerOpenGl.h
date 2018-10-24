@@ -8,13 +8,14 @@
 #ifndef SRC_SUBDIVIDER_POLYSUBDIVIDEROPENGL_H_
 #define SRC_SUBDIVIDER_POLYSUBDIVIDEROPENGL_H_
 
-#include <ShaderProgram.h>
-#include <OpenGLProgram.h>
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+#include <photometricGradient/ShaderProgram.h>
+#include <photometricGradient/OpenGLProgram.h>
+#include <photometricGradient/types.hpp>
 #include <TransforMesh/Mesh.h>
-#include <types.hpp>
 class PolySubdividerOpenGl : public OpenGLProgram{
 public:
   PolySubdividerOpenGl(int imageWidth, int imageHeight, GLFWwindow* window);

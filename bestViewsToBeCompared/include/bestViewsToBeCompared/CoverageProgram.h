@@ -1,7 +1,7 @@
 #ifndef BESTVIEWSTOBECOMPARED_SRC_COVERAGEPROGRAM_H_
 #define BESTVIEWSTOBECOMPARED_SRC_COVERAGEPROGRAM_H_
 
-#include <ShaderProgram.h>
+#include <photometricGradient/ShaderProgram.h>
 #include <glm/glm.hpp>
 
 

@@ -1,11 +1,13 @@
 #ifndef PhotometricRefinement_H_
 #define PhotometricRefinement_H_
 
-#include <types.hpp>
-#include <typesRefinement.hpp>
-#include <glm/glm.hpp>
-#include <SurfaceEvolver.h>
 #include <string>
+#include <glm/glm.hpp>
+#include <photometricGradient/types.hpp>
+#include <misc/typesRefinement.hpp>
+#include <misc/OpenMvgParser.h>
+#include <SurfaceEvolver.h>
+#include <Configurator.h>
 
 class PhotometricRefinement {
 public:

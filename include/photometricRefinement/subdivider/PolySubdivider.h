@@ -1,9 +1,9 @@
 #ifndef SRC_POLYSUBDIVIDER_H_
 #define SRC_POLYSUBDIVIDER_H_
 
-#include <Subdivider.h>
-#include <Mesh.h>
 #include <vector>
+#include <subdivider/Subdivider.h>
+#include <TransforMesh/Mesh.h>
 
 class PolySubdivider : public Subdivider {
 public:

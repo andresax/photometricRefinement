@@ -8,8 +8,8 @@
 #ifndef SRC_SUBDIVIDER_CHECKREPROJAREAPROGRAM_H_
 #define SRC_SUBDIVIDER_CHECKREPROJAREAPROGRAM_H_
 
-#include <ShaderProgram.h>
-#include <glm.hpp>
+#include <photometricGradient/ShaderProgram.h>
+#include <glm/glm.hpp>
 class CheckReprojAreaProgram : public ShaderProgram{
 public:
   CheckReprojAreaProgram(int imageWidth, int imageHeight);

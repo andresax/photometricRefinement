@@ -1,24 +1,5 @@
 #include <SurfaceEvolver.h>
 
-//#include <utilities.hpp>
-#include <sstream>
-#include <fstream>
-#include <iostream>
-#include <unistd.h>
-
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-//#include <output_transforMesh.hpp>
-
-#include <Logger.h>
-#include <CameraChooser.h>
-// #include <CGAL/Subdivision_method_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
-#include <CGAL/Polygon_mesh_processing/remesh.h>
-#include <CGAL/Iterator_range.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-
 SurfaceEvolver::SurfaceEvolver() {
 }
 

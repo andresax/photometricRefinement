@@ -1,7 +1,4 @@
 #include <PhotometricRefinement.h>
-#include <OpenMvgParser.h>
-#include <Configurator.h>
-#include <types.hpp>
 
 PhotometricRefinement::PhotometricRefinement(std::string path) {
   Configurator con(path);

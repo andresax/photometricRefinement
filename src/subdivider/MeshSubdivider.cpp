@@ -1,11 +1,11 @@
-#include <MeshSubdivider.h>
+#include <subdivider/MeshSubdivider.h>
 #include <CGAL/Iterator_range.h>
 
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <boost/function_output_iterator.hpp>
-#include <utilities.hpp>
+#include <misc/utilities.hpp>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 typedef boost::graph_traits<MeshSurface>::face_iterator fac_it;

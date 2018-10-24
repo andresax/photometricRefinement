@@ -1,5 +1,4 @@
-
-#include <Subdivider.h>
+#include <subdivider/Subdivider.h>
 
 Subdivider::Subdivider() {
   areaMax_ = 16;

@@ -1,26 +1,41 @@
 #ifndef SURVACEEVOLVER_H_
 #define SURVACEEVOLVER_H_
 
+#include <sstream>
+#include <fstream>
 #include <iostream>
-
-#include <types.hpp>
-#include <typesRefinement.hpp>
-#include <PhotometricGradient.h>
-#include <OpenGLProgram.h>
-
-#include <PolySubdividerOpenGl.h>
-
-#include <TransforMesh/Mesh.h>
-#include <Logger.h>
-#include <typesRefinement.hpp>
-
-#include <opencv2/core/core.hpp>
+#include <unistd.h>
 
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+// #include <CGAL/Subdivision_method_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
+#include <CGAL/Iterator_range.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
+#include <photometricGradient/Logger.h>
+#include <photometricGradient/types.hpp>
+#include <photometricGradient/PhotometricGradient.h>
+#include <photometricGradient/OpenGLProgram.h>
+#include <photometricGradient/Logger.h>
+#include <TransforMesh/Mesh.h>
+#include <bestViewsToBeCompared/CameraChooser.h>
+
+#include <misc/typesRefinement.hpp>
+#include <misc/typesRefinement.hpp>
+#include <subdivider/PolySubdividerOpenGl.h> 
 //#include <MeshBuilder.h>
+
+//#include <utilities.hpp>
+
+//#include <output_transforMesh.hpp>
+
 
 //typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 

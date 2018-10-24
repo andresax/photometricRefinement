@@ -1,5 +1,4 @@
-
-#include <CheckReprojAreaProgram.h>
+#include <subdivider/CheckReprojAreaProgram.h>
 
 
 CheckReprojAreaProgram::CheckReprojAreaProgram(int imageWidth, int imageHeight) :

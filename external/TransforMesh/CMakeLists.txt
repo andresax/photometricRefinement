@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.2)
 set( CMAKE_BUILD_TYPE "Debug")
 set( CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE ) # avoid annoying messages
+set( transforMesh_BUILD_DIR "${PROJECT_SOURCE_DIR}/build/src/}" PARENT_SCOPE)
+set( transforMesh_LIBRARIES "meshNoiser mesh meshIntersections" PARENT_SCOPE)
 project(TransforMesh)
 
 # find dependencies

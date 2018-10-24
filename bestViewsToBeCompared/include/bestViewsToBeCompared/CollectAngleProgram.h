@@ -8,8 +8,7 @@
 #ifndef PHOTOMETRIC_REFINEMENT_COLLECTANGLEPROGRAM_H_
 #define PHOTOMETRIC_REFINEMENT_COLLECTANGLEPROGRAM_H_
 
-#include <ShaderProgram.h>
-
+#include <photometricGradient/ShaderProgram.h>
 #include <glm/glm.hpp>
 
 
