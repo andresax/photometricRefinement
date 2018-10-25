@@ -1,3 +1,1 @@
-add_library(configurator Configurator.cpp)
-add_library(photometricRefinement PhotometricRefinement.cpp)
-add_library(surfaceEvolver SurfaceEvolver.cpp)
+add_library(photometricRefinement Configurator.cpp PhotometricRefinement.cpp SurfaceEvolver.cpp misc/OpenMvgParser.cpp misc/utilities.cpp subdivider/MeshSubdivider.cpp subdivider/PolySubdivider.cpp subdivider/PolySubdividerOpenGl.cpp subdivider/Subdivider.cpp subdivider/CheckReprojAreaProgram.cpp)

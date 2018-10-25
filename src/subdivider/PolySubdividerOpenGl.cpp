@@ -5,9 +5,9 @@
  *      Author: andrea
  */
 
-#include <PolySubdividerOpenGl.h>
-#include <DepthMapProgram.h>
-#include <CheckReprojAreaProgram.h>
+#include <photometricGradient/DepthMapProgram.h>
+#include <subdivider/CheckReprojAreaProgram.h>
+#include <subdivider/PolySubdividerOpenGl.h>
 
 PolySubdividerOpenGl::PolySubdividerOpenGl(int imageWidth, int imageHeight, GLFWwindow* window) {
   window_ = window;

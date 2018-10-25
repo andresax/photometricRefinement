@@ -1,5 +1,0 @@
-add_library( meshSubdivider MeshSubdivider.cpp )
-add_library( polySubdivider PolySubdivider.cpp )
-add_library( polySubdividerOpenGl PolySubdivider.cpp )
-add_library( subdivider Subdivider.cpp )
-add_library( checkReprojAreaProgram CheckReprojAreaProgram.cpp )
