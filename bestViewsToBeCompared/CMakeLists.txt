@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.8.3)
 set( CMAKE_BUILD_TYPE "Debug")
 set( CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE ) # avoid annoying messages
 set( OpenGL_GL_PREFERENCE "GLVND" )
-set( bestViewsToBeCompared_BUILD_DIR "${PROJECT_SOURCE_DIR}/build/src/}" PARENT_SCOPE)
 project(bestViewsToBeCompared)
 
 # ----------------------- LIBRARIES ---------------------------

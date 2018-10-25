@@ -1,0 +1,15 @@
+find_package(CGAL REQUIRED)
+include( ${CGAL_USE_FILE} )
+find_package(OpenCV REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(GLUT REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(glm REQUIRED)
+find_package(glfw3 REQUIRED)
+find_package(OpenMP REQUIRED)
+find_package(Boost COMPONENTS system filesystem thread REQUIRED)
+
+set(EXTERNAL_LIBRARIES ${Boost_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${OpenCV_LIBRARIES} ${GLUT_LIBRARIES} ${CGAL_LIBRARIES} glfw glm)
+
+add_executable( bestViewsToBeComparedMain Main.cpp TestPreviousBestCameras.cpp)
+target_link_libraries( bestViewsToBeComparedMain photometricRefinement bestViewsToBeCompared photometricGradient mesh ${EXTERNAL_LIBRARIES})

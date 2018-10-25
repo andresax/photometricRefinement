@@ -48,22 +48,15 @@ include_directories( 	${PROJECT_SOURCE_DIR}/include/photometricRefinement/
 			${PROJECT_SOURCE_DIR}/bestViewsToBeCompared/include/ 
 			${PROJECT_SOURCE_DIR}/external/ ) 
 
-link_directories( ${photometricGradient_BUILD_DIR}/build/src )	      
-link_directories( ${transforMesh_BUILD_DIR}/build/src )	      
-link_directories( ${bestViewsToBeCompared_BUILD_DIR}/build/src )	      
+link_directories( "photometricGradient/build/src/" )	      
+link_directories( "external/TransforMesh/build/" )	      
+link_directories( "bestViewsToBeCompared/build/src/" )	      
  
 # ------------------------ BUILD -------------------------------
 message("**** HERE TEST VARIABLES" ) 
 message("${EXTERNAL_LIBRARIES}")
-message("${photometricGradient_BUILD_DIR}")
-message("${transforMesh_BUILD_DIR}")
-message("${bestViewsToBeCompared_BUILD_DIR}")
 message("**** HERE TEST VARIABLES" ) 
 
-add_subdirectory("external/TransforMesh")
-add_subdirectory("photometricGradient")
-add_subdirectory("bestViewsToBeCompared")
 add_subdirectory("src")
-add_subdirectory("src/misc")
-add_subdirectory("src/subdivider")
 add_subdirectory("test")
+add_subdirectory("test/bestViewsToBeCompared")

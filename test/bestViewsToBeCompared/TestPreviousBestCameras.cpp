@@ -1,6 +1,6 @@
-#include <test/TestPreviousBestCameras.h>
+#include <test/bestViewsToBeComparedTest/TestPreviousBestCameras.h>
 #include <photometricRefinement/misc/OpenMvgParser.h>
-#include <CameraChooser.h>
+#include <bestViewsToBeCompared/CameraChooser.h>
 #include <TransforMesh/Mesh.h>
 
 TestPreviousBestCameras::TestPreviousBestCameras() {
