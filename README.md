@@ -3,6 +3,20 @@
 The code in this repository implements a classical mesh refinement method that minimizes the ZNCC photometric error among pairs of images.
 It takes a json file in the format defined by openMVG [here](https://openmvg.readthedocs.io/en/latest/software/SfM/SfM_OutputFormat/).
 
+It is the backbone of the paper: Romanoni, Andrea, and Matteo Matteucci. "Mesh-based camera pairs selection and occlusion-aware masking for mesh refinement." Pattern Recognition Letters 125 (2019): 364-372.
+If you use it please cite:
+
+```
+@article{romanoni2019mesh,
+  title={Mesh-based camera pairs selection and occlusion-aware masking for mesh refinement},
+  author={Romanoni, Andrea and Matteucci, Matteo},
+  journal={Pattern Recognition Letters},
+  volume={125},
+  pages={364--372},
+  year={2019},
+  publisher={Elsevier}
+}
+```
 
 ## Dependencies
 
