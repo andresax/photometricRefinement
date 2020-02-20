@@ -1,6 +1,5 @@
 #include <SurfaceEvolver.h>
 
-//#include <utilities.hpp>
 #include <sstream>
 #include <fstream>
 #include <iostream>
@@ -8,11 +7,9 @@
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-//#include <output_transforMesh.hpp>
 
 #include <Logger.h>
 #include <CameraChooser.h>
-// #include <CGAL/Subdivision_method_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
@@ -93,6 +90,8 @@ void SurfaceEvolver::refineWithBest2SfM() {
   camsToCompareIdEachCam_.clear();
   consideredIdx_.resize(sfmData_->camerasList_.size());
   std::iota(consideredIdx_.begin(), consideredIdx_.begin() + sfmData_->camerasList_.size(), 0);
+    
+
   if (sfmData_->points_.size() > 0) {
 
     CameraChooser camCh;
@@ -179,7 +178,7 @@ void SurfaceEvolver::refine() {
 
       if (curGradIter % 1 == 0) {
         std::stringstream s;
-        s << config_.pathOutputDir_ << "CurMesh" << (4 - curLevelOfDetail) * config_.numIt_ + curGradIter << ".off";
+        s << config_.pathOutputDir_ << "CurMesh" << (maxLOD - curLevelOfDetail-1) * config_.numIt_ + curGradIter << ".off";
         mesh_.saveFormat(s.str().c_str());
       }
     }

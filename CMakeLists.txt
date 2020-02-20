@@ -85,10 +85,10 @@ target_link_libraries(photometricRefinement ${OpenCV_LIBS}
                                             ${LAPACK_LIBRARIES}
                                             ${OPENGL_LIBRARIES}
                                             ${GLEW_LIBRARIES}
-					                                  glfw 
-                                            ${GLFW_LIBRARIES}
+                                            #${GLFW_LIBRARIES}
+                                            # glfw
                                             TransforMesh
-                                            -lmpfr
+                                            mpfr
                                             photometricGradient
                                             bestViewsToBeCompared
                                             ${CGAL_LIBRARY}

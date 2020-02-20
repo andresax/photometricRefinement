@@ -406,10 +406,10 @@ void CameraChooser::getBestBySfmOutput(const std::shared_ptr<SfMData>& sfm, int 
   std::iota(indices.begin(), indices.end(), 0);
   std::sort(std::begin(indices), std::end(indices), [&](int i1, int i2) {return mutualMatches[curIdx][i1] > mutualMatches[curIdx][i2];});
 //
-//  std::cout<<curIdx<<": " <<std::flush;
-//  for (auto i : mutualMatches[curIdx])
-//    std::cout << " " << i << std::flush;
-//  std::cout << std::endl;
+ std::cout<<curIdx<<": " <<std::flush;
+ for (auto i : mutualMatches[curIdx])
+   std::cout << " " << i << std::flush;
+ std::cout << std::endl;
   for (int i = 0; i < ((maxCam < indices.size()) ? maxCam : indices.size()); ++i) {
     if (mutualMatches[curIdx][indices[i]] > minMatchesNum)
       out.push_back(indices[i]);
@@ -439,7 +439,7 @@ void CameraChooser::getBestBySfmOutput(const std::shared_ptr<SfMData>& sfm, int 
       if (mutualMatches[curIdx][indices[i]] > minMatchesNum && done[curIdx][indices[i]] == false) {
         tmp.push_back(indices[i]);
         done[curIdx][indices[i]] = true;
-       // done[indices[i]][curIdx] = true;
+        done[indices[i]][curIdx] = true;
         countCam++;
       }
       ++i;
@@ -455,6 +455,7 @@ void CameraChooser::computeMutualMatches(const std::shared_ptr<SfMData>& sfm) {
   if (mutualMatches.size() == 0) {
     std::vector<int> tmp(sfm->camerasList_.size(), 0);
     mutualMatches.assign(sfm->camerasList_.size(), tmp);
+    std::cout <<"CAM LIST SIZE: "<<sfm->camerasList_.size()<<std::endl;
 
     for (int cam1 = 0; cam1 < sfm->camerasList_.size(); cam1++) {
       std::sort(sfm->pointsVisibleFromCamN_[cam1].begin(), sfm->pointsVisibleFromCamN_[cam1].end());
@@ -465,25 +466,15 @@ void CameraChooser::computeMutualMatches(const std::shared_ptr<SfMData>& sfm) {
         for (auto ptID : sfm->pointsVisibleFromCamN_[cam1]) {
           if (std::binary_search(sfm->pointsVisibleFromCamN_[cam2].begin(), sfm->pointsVisibleFromCamN_[cam2].end(), ptID)) {
             float angle = angleThreePoints(sfm->camerasList_[cam1].center, sfm->points_[ptID], sfm->camerasList_[cam2].center);
-//
-//            utilities::printMatrix(sfm->camerasList_[cam1].center);
-//            utilities::printMatrix(sfm->camerasList_[cam2].center);
-//            utilities::printMatrix(sfm->points_[ptID]);
-//    exit(0);
-//            std::cout<<angle*180.0f/PI<<std::endl;
-            if (angle > 20.0f / 180.0f * PI && angle < 60.0f / 180.0f * PI) {
 
-              //std::cout<<angle*180.0f/PI<<std::endl;
+            if (angle > 0.0f / 180.0f * PI && angle < 180.0f / 180.0f * PI) {
               mutualMatches[cam1][cam2]++;
               mutualMatches[cam2][cam1]++;
-//              std::cout<<angle<<std::endl;
-//               std::cout<<angle*180/PI<<std::endl;
             }
           }
         }
       }
     }
-//exit(0);
   }
 }
 

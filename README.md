@@ -20,7 +20,7 @@ If you use it please cite:
 
 ## Dependencies
 
-The codde is implemented in c++ and OpenGL. You can run the following in Ubuntu/Debian to install the required dependencies
+The code is implemented in C++ and OpenGL. You can run the following in Ubuntu/Debian to install the required dependencies
 
 sudo apt install libboost-filesystem-dev libboost-thread-dev libboost-system-dev libopencv-dev libglew-dev libcgal-dev freeglut3-dev libmpfr-dev libglu1-mesa-dev
 
