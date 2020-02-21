@@ -1,8 +1,9 @@
-FROM nvidia/opengl:base-ubuntu18.04
+FROM nvidia/opengl:1.0-glvnd-devel-ubuntu18.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN true
 ENV NUM_CORES 10
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility,display
 
 RUN apt-get update --fix-missing 
 RUN apt-get -y upgrade
