@@ -214,26 +214,6 @@ void SurfaceEvolver::computeCameraPairs(std::vector<int> frames, std::vector<std
     logg_.printOn(sss.str());
   }
 
-  // for (int it = 3; it < frames.size(); ++it) {
-  //   int f1 = frames[it];
-  //   int f2 = frames[it - 3];
-  //   pairwiseCam.push_back(std::pair<int, int>(f2, f1));
-  //   pairwiseCam.push_back(std::pair<int, int>(f1, f2));
-  //   std::stringstream sss;
-  //   sss << " " << f2 << " & " << f1 << " ";
-  //   logg_.printOn(sss.str());
-  // }
-
-  // for (int it = 4; it < frames.size(); ++it) {
-  //   int f1 = frames[it];
-  //   int f2 = frames[it - 4];
-  //   pairwiseCam.push_back(std::pair<int, int>(f2, f1));
-  //   pairwiseCam.push_back(std::pair<int, int>(f1, f2));
-  //   std::stringstream sss;
-  //   sss << " " << f2 << " & " << f1 << " ";
-  //   logg_.printOn(sss.str());
-  // }
-
 }
 
 void SurfaceEvolver::whichCamsAmIUsing(std::vector<std::pair<int, int> > &pairwiseCam, std::vector<photometricGradient::CameraType> & cams) {

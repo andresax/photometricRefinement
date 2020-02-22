@@ -455,7 +455,6 @@ void CameraChooser::computeMutualMatches(const std::shared_ptr<SfMData>& sfm) {
   if (mutualMatches.size() == 0) {
     std::vector<int> tmp(sfm->camerasList_.size(), 0);
     mutualMatches.assign(sfm->camerasList_.size(), tmp);
-    std::cout <<"CAM LIST SIZE: "<<sfm->camerasList_.size()<<std::endl;
 
     for (int cam1 = 0; cam1 < sfm->camerasList_.size(); cam1++) {
       std::sort(sfm->pointsVisibleFromCamN_[cam1].begin(), sfm->pointsVisibleFromCamN_[cam1].end());
@@ -467,9 +466,9 @@ void CameraChooser::computeMutualMatches(const std::shared_ptr<SfMData>& sfm) {
           if (std::binary_search(sfm->pointsVisibleFromCamN_[cam2].begin(), sfm->pointsVisibleFromCamN_[cam2].end(), ptID)) {
             float angle = angleThreePoints(sfm->camerasList_[cam1].center, sfm->points_[ptID], sfm->camerasList_[cam2].center);
 
-            if (angle > 0.0f / 180.0f * PI && angle < 180.0f / 180.0f * PI) {
+            if (angle > 15.0f / 180.0f * PI && angle < 60.0f / 180.0f * PI) {
               mutualMatches[cam1][cam2]++;
-              mutualMatches[cam2][cam1]++;
+              // mutualMatches[cam2][cam1]++;
             }
           }
         }
