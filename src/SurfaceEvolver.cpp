@@ -16,6 +16,8 @@
 #include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
+#define EPS 0.000000000001
+
 SurfaceEvolver::SurfaceEvolver() {
 }
 
@@ -75,7 +77,7 @@ void SurfaceEvolver::resetMeshInfo() {
 
 void SurfaceEvolver::refineWithNearCams() {
   std::vector<int> frames;
-//  for (int i = 0; i < 11; ++i){
+
   for (int i = 0; i < sfmData_->camerasList_.size(); ++i) {
     frames.push_back(i);
   }
@@ -90,8 +92,7 @@ void SurfaceEvolver::refineWithBest2SfM() {
   camsToCompareIdEachCam_.clear();
   consideredIdx_.resize(sfmData_->camerasList_.size());
   std::iota(consideredIdx_.begin(), consideredIdx_.begin() + sfmData_->camerasList_.size(), 0);
-    
-
+  
   if (sfmData_->points_.size() > 0) {
 
     CameraChooser camCh;
@@ -129,11 +130,9 @@ void SurfaceEvolver::refine() {
   for (int curLevelOfDetail = maxLOD; curLevelOfDetail > 0; --curLevelOfDetail) {
     remesh(curLevelOfDetail);
 
-    // removeUnusedMesh(camsCur, false);
-
-    for (Facet_iterator it = mesh_.p.facets_begin(); it != mesh_.p.facets_end(); it++) {
-      it->setIntersectionStatus(true);
-    }
+    // for (Facet_iterator it = mesh_.p.facets_begin(); it != mesh_.p.facets_end(); it++) {
+    //   it->setIntersectionStatus(true);
+    // }
 
     for (int curGradIter = 0; curGradIter < config_.numIt_; ++curGradIter) {
 
@@ -141,18 +140,22 @@ void SurfaceEvolver::refine() {
       std::cout << "++++Iteration num. " << (maxLOD - curLevelOfDetail) * config_.numIt_ + curGradIter << " num vert " << mesh_.p.size_of_vertices() << std::endl;
       gradientVectorsField_.assign(mesh_.p.size_of_vertices(), glm::vec3(0, 0, 0));
       numGradientContribField_.assign(mesh_.p.size_of_vertices(), 0);
-
+     for (Vertex_iterator h = mesh_.p.vertices_begin(); h != mesh_.p.vertices_end(); ++h) {
+        h->setVisibility(true);
+      }
+      resetVertexArrayBuffer();
       log.startEvent();
       //one gradient step
       std::cout << "comparison ";
       for (auto p : curPairwiseCam_) {
+        
 
         // log.startEvent();
 //        log.startEvent();
-        removeInvisible(sfmData_->camerasList_[p.first], sfmData_->camerasList_[p.second]);
+        // removeInvisible(sfmData_->camerasList_[p.first], sfmData_->camerasList_[p.second]);
         //log.endEventAndPrint("removeInvisible ", false);
         //log.startEvent();
-        resetVertexArrayBuffer();
+        // resetVertexArrayBuffer();
         //log.endEventAndPrint("  resetVertexArrayBuffer ", true);
         std::vector<glm::vec3> feedbackTr = photometricGradient_->twoImageGradient(images_[p.first], images_[p.second], sfmData_->camerasList_[p.first],
             sfmData_->camerasList_[p.second], numActiveVertices_, curLevelOfDetail-1);
@@ -170,15 +173,14 @@ void SurfaceEvolver::refine() {
 
       log.startEvent();
       mesh_.smooth(config_.lambdaSmooth_, 0, true);
-      mesh_.smooth(config_.lambdaSmooth_, 0, true);
       log.endEventAndPrint("addLaplacianUmbrellaOperator", true);
 
       resetMeshInfo();
       log.endEventAndPrint("Iteration ended", true);
 
-      if (curGradIter % 1 == 0) {
+      if (curGradIter % 2 == 0) {
         std::stringstream s;
-        s << config_.pathOutputDir_ << "CurMesh" << (maxLOD - curLevelOfDetail-1) * config_.numIt_ + curGradIter << ".off";
+        s << config_.pathOutputDir_ << "CurMesh" << (maxLOD - curLevelOfDetail) * config_.numIt_ + curGradIter << ".off";
         mesh_.saveFormat(s.str().c_str());
       }
     }
@@ -226,7 +228,7 @@ void SurfaceEvolver::whichCamsAmIUsing(std::vector<std::pair<int, int> > &pairwi
 
   std::vector<int>::iterator newEnd = std::unique(camerasOptimizedId.begin(), camerasOptimizedId.end());
   for (auto it = camerasOptimizedId.begin(); it != newEnd; it++) {
-    std::cout << " " << *it << std::endl;
+    // std::cout << " " << *it << std::endl;
     cams.push_back(sfmData_->camerasList_[*it]);
   }
 
@@ -261,7 +263,6 @@ void SurfaceEvolver::evolveMesh(const std::vector<glm::vec3>& displacements, con
       glm::vec3 normVal = sign * displacements[curV];
 
       if (glm::length(normVal) < 200 * median) {
-//        if (1 / 50 * median < glm::length(normVal) && glm::length(normVal) < 50 * median) {
         Vector the_shift = Vector(normVal.x, normVal.y, normVal.z);
         v->move(the_shift);
       }
@@ -297,13 +298,13 @@ void SurfaceEvolver::updateGradient(const std::vector<glm::vec3>& curDisplacemen
     std::cout << "maxElem.size()<0" << std::endl;
   }
 
-  std::vector<int> numGradientContribField(numGradientContribField_.size(), 0);
+  // std::vector<int> numGradientContribField(numGradientContribField_.size(), 0);
   for (auto v : curDisplacements) {
     int curId = curActiveVertices_[curV]->id;
 
     if (!isnan(v.x) && !isnan(v.y) && !isnan(v.z) && !isinf(v.x) && !isinf(v.y) && !isinf(v.z) && glm::length(v) < 50 * median) {
       gradientVectorsField_[curId] += -alpha * v;
-      if ((v.x != 0 || v.y != 0 || v.z != 0)) {
+      if (((v.x < -EPS || v.x > EPS) || (v.y < -EPS || v.y > EPS) || (v.z < -EPS || v.z > EPS))) {
         numGradientContribField_[curId]++;
       }
     }
@@ -315,13 +316,9 @@ void SurfaceEvolver::updateGradient(const std::vector<glm::vec3>& curDisplacemen
 void SurfaceEvolver::loadImages() {
   images_.clear();
   for (int curC = 0; curC < sfmData_->camerasList_.size(); ++curC) {
-
     cv::Mat im = cv::imread(sfmData_->camerasList_[curC].pathImage);
     std::cout << "path " << sfmData_->camerasList_[curC].pathImage << std::endl;
-
     images_.push_back(im);
-//      cv::imshow("im",im);
-//      cv::waitKey();
   }
 }
 
@@ -410,56 +407,17 @@ void SurfaceEvolver::removeUnusedMesh(std::vector<photometricGradient::CameraTyp
         tobeset1 = true;
       }
 
-//      std::cout<<"+++++++++++++++"<<std::endl;
-//      utilities::printMatrix("pRes1",pRes1);
-//      utilities::printMatrix("pRes2",pRes2);
-//      utilities::printMatrix("pRes3",pRes3);
-//      utilities::printMatrix("c.rotation * p1b",c.rotation * p1b);
-//      utilities::printMatrix("p1b*c.rotation",p1b*c.rotation);
-//      utilities::printMatrix("c.translation",c.translation);
-//      utilities::printMatrix("c.center",c.center);
-//      utilities::printMatrix("p1",p1);
-//      std::cout<<dist1<<std::endl;
-//      std::cout<<"+-------------+"<<std::endl;
-
       if (pRes3.z < config_.maxDistanceCamFeatureRef && dist1 < 2 * config_.maxDistanceCamFeatureRef) {
         tobeset2 = true;
       }
     }
 
-//    if (tobeset2 ) {
     if (tobeset1 && tobeset2) {
       h->setVisibility(true);
     }
 
   }
-//  exit(0);
-//
-//  int count = 0;
-//  for (auto c : cams) {
-//    if (count % 49 == 0) {
-//      std::vector<Point> pts;
-//      for (Vertex_iterator h = mesh_.p.vertices_begin(); h != mesh_.p.vertices_end(); ++h) {
-//
-//        glm::mat4 mvp1 = c.mvp;
-//        glm::vec4 p1 = glm::vec4(h->point().x(), h->point().y(), h->point().z(), 1.0f);
-//        glm::vec3 p1b = glm::vec3(h->point().x(), h->point().y(), h->point().z());
-//        glm::vec4 pRes1 = mvp1 * p1;
-//        glm::vec3 pRes3 = p1b * c.rotation + c.translation;
-//        float dist1 = glm::length(c.center - glm::vec3(p1.x, p1.y, p1.z));
-//
-//        if (pRes3.z < config_.maxDistanceCamFeatureRef && dist1 < 2*config_.maxDistanceCamFeatureRef) {
-//
-//          pts.push_back(Point(pRes3.x, pRes3.y, pRes3.z));
-//        }
-//
-//      }
-//      std::stringstream sfi;
-//      sfi << "ptsss" << count;
-//      output_transforMesh::printPointVec(pts, sfi.str());
-//    }
-//    count++;
-//  }
+
 
   for (Facet_iterator itFac = mesh_.p.facets_begin(); itFac != mesh_.p.facets_end(); itFac++) {
 
@@ -523,7 +481,6 @@ void SurfaceEvolver::removeInvisible(photometricGradient::CameraType cam1, photo
 }
 
 void SurfaceEvolver::remesh(int lod) {
-  mesh_.saveFormat("Prima.off");
   for (int var = 0; var < config_.ensureareait_; ++var) {
 
     subdivider_->setCurActiveVertices(curActiveVertices_);
@@ -532,8 +489,6 @@ void SurfaceEvolver::remesh(int lod) {
     resetVertexArrayBuffer();
   }
   resetMeshInfo();
-  mesh_.saveFormat("Dopo.off");
-  //exit(0);
 }
 
 void SurfaceEvolver::removeInvisible(photometricGradient::CameraType cam1) {

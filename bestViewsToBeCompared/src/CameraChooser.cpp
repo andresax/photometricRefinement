@@ -466,9 +466,9 @@ void CameraChooser::computeMutualMatches(const std::shared_ptr<SfMData>& sfm) {
           if (std::binary_search(sfm->pointsVisibleFromCamN_[cam2].begin(), sfm->pointsVisibleFromCamN_[cam2].end(), ptID)) {
             float angle = angleThreePoints(sfm->camerasList_[cam1].center, sfm->points_[ptID], sfm->camerasList_[cam2].center);
 
-            if (angle > 15.0f / 180.0f * PI && angle < 60.0f / 180.0f * PI) {
+            if (angle > 5.0f / 180.0f * PI && angle < 80.0f / 180.0f * PI) {
               mutualMatches[cam1][cam2]++;
-              // mutualMatches[cam2][cam1]++;
+              mutualMatches[cam2][cam1]++;
             }
           }
         }
